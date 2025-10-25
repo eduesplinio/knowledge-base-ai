@@ -10,7 +10,10 @@
     "lint:fix": "turbo lint -- --fix",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx}\"",
     "format:check": "prettier --check  \"**/*.{ts,tsx,md,json,js,jsx}\"",
+    "format:fix": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx}\"",
     "test": "turbo test",
+    "test:watch": "turbo test -- --watch",
+    "test:coverage": "turbo test -- --coverage",
     "clean": "turbo clean && rm -rf node_modules",
     "prepare": "husky",
     "commit": "cz"
