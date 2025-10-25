@@ -4,19 +4,19 @@ import { Document, Types } from 'mongoose';
 @Schema({ timestamps: true })
 export class Article extends Document {
   @Prop({ required: true })
-  title: string;
+  title!: string;
 
   @Prop({ required: true })
-  content: string;
+  content!: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Space', required: true })
-  spaceId: Types.ObjectId;
+  spaceId!: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  authorId: Types.ObjectId;
+  authorId!: Types.ObjectId;
 
   @Prop({ type: [String], default: [] })
-  tags: string[];
+  tags!: string[];
 
   @Prop({ type: [Number] })
   content_vector?: number[];

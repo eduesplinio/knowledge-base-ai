@@ -4,13 +4,13 @@ import { Document, Types } from 'mongoose';
 @Schema({ timestamps: true })
 export class Space extends Document {
   @Prop({ required: true })
-  name: string;
+  name!: string;
 
   @Prop()
   description?: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  authorId: Types.ObjectId;
+  authorId!: Types.ObjectId;
 
   @Prop({ type: Object })
   settings?: {
