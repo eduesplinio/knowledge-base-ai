@@ -18,11 +18,11 @@ export class Article extends Document {
   @Prop({ type: [String], default: [] })
   tags!: string[];
 
-  @Prop({ type: [Number] })
-  content_vector?: number[];
+  @Prop({ type: [Number], default: null })
+  content_vector?: number[] | null;
 
-  @Prop({ type: String, enum: ['DRAFT', 'IN_REVIEW', 'PUBLISHED'] })
-  status?: string;
+  // @Prop({ type: String, enum: ['DRAFT', 'IN_REVIEW', 'PUBLISHED'] })
+  // status?: string;
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);

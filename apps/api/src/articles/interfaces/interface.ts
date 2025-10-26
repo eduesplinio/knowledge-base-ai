@@ -6,8 +6,7 @@ export interface IArticle extends Document {
   spaceId: Types.ObjectId;
   authorId: Types.ObjectId;
   tags: string[];
-  content_vector?: number[];
-  status?: 'DRAFT' | 'IN_REVIEW' | 'PUBLISHED';
+  content_vector?: number[] | null;
   createdAt: Date;
   updatedAt: Date;
 }
