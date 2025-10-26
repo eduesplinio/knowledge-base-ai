@@ -6,13 +6,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Navbar */}
       <header className="border-b">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <h1 className="text-xl font-bold">Base de Conhecimento</h1>
+          <h1 className="text-2xl font-bold">Base de Conhecimento</h1>
           <nav className="flex items-center gap-4">
             <Link href="/" className="text-sm hover:underline">
               Espaços
-            </Link>
-            <Link href="/search" className="text-sm hover:underline">
-              Buscar
             </Link>
           </nav>
         </div>

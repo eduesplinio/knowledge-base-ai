@@ -9,10 +9,21 @@ interface Space {
 interface SpaceListProps {
   spaces: Space[];
   onDeleteClick?: (space: Space) => void;
+  searchQuery?: string;
 }
 
-export function SpaceList({ spaces, onDeleteClick }: SpaceListProps) {
+export function SpaceList({ spaces, onDeleteClick, searchQuery }: SpaceListProps) {
   if (spaces.length === 0) {
+    if (searchQuery && searchQuery.trim()) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
+            Nenhum espaço encontrado para &quot;{searchQuery}&quot;
+          </p>
+          <p className="text-sm text-muted-foreground mt-2">Tente buscar com outros termos.</p>
+        </div>
+      );
+    }
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">Nenhum espaço encontrado. Crie seu primeiro espaço!</p>
