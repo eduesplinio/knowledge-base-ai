@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { MdMoreVert, MdEdit, MdDelete } from 'react-icons/md';
+import ReactMarkdown from 'react-markdown';
 import {
   Card,
   CardContent,
@@ -14,8 +15,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
@@ -52,13 +51,15 @@ export function ArticleCard({ article, onDelete }: ArticleCardProps) {
     article.content.length > 150 ? article.content.substring(0, 150) + '...' : article.content;
 
   return (
-    <Card className="hover:shadow-lg transition-shadow relative group">
+    <Card className="hover:shadow-lg transition-shadow">
       <Link href={`/articles/${article._id}`} className="block">
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
-            <div className="flex-1 min-w-0">
-              <CardTitle className="break-words">{article.title}</CardTitle>
-              <CardDescription className="mt-2 break-words">{contentPreview}</CardDescription>
+            <div className="flex-1">
+              <CardTitle>{article.title}</CardTitle>
+              <CardDescription className="mt-2 prose prose-sm max-w-none">
+                <ReactMarkdown>{contentPreview}</ReactMarkdown>
+              </CardDescription>
             </div>
 
             <DropdownMenu>

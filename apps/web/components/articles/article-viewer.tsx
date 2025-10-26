@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Badge } from '@workspace/ui/components/badge';
+import ReactMarkdown from 'react-markdown';
 
 interface ArticleViewerProps {
   article: {
@@ -22,22 +23,22 @@ export function ArticleViewer({ article }: ArticleViewerProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-3xl break-words">{article.title}</CardTitle>
+        <CardTitle className="text-3xl">{article.title}</CardTitle>
         <p className="text-sm text-muted-foreground">Criado em: {formattedDate}</p>
       </CardHeader>
       <CardContent className="space-y-6">
         {article.tags && article.tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {article.tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="break-all">
+              <Badge key={tag} variant="secondary">
                 {tag}
               </Badge>
             ))}
           </div>
         )}
 
-        <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words">
-          {article.content}
+        <div className="prose prose-sm max-w-none">
+          <ReactMarkdown>{article.content}</ReactMarkdown>
         </div>
       </CardContent>
     </Card>
