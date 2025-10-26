@@ -1,4 +1,9 @@
+'use client';
+
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
+import { Button } from '@workspace/ui/components/button';
+import { MdLogout } from 'react-icons/md';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +16,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Link href="/" className="text-sm hover:underline">
               Espaços
             </Link>
+            <Button variant="ghost" size="sm" onClick={() => signOut({ callbackUrl: '/login' })}>
+              <MdLogout className="mr-2 h-4 w-4" />
+              Sair
+            </Button>
           </nav>
         </div>
       </header>

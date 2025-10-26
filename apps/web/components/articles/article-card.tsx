@@ -19,23 +19,25 @@ import {
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
+import { Badge } from '@workspace/ui/components/badge';
 
-interface SpaceCardProps {
-  space: {
+interface ArticleCardProps {
+  article: {
     _id: string;
-    name: string;
-    description?: string;
+    title: string;
+    content: string;
+    tags: string[];
   };
   onDelete?: () => void;
 }
 
-export function SpaceCard({ space, onDelete }: SpaceCardProps) {
+export function ArticleCard({ article, onDelete }: ArticleCardProps) {
   const router = useRouter();
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    router.push(`/spaces/${space._id}/edit`);
+    router.push(`/articles/${article._id}/edit`);
   };
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -46,16 +48,17 @@ export function SpaceCard({ space, onDelete }: SpaceCardProps) {
     }
   };
 
+  const contentPreview =
+    article.content.length > 150 ? article.content.substring(0, 150) + '...' : article.content;
+
   return (
     <Card className="hover:shadow-lg transition-shadow relative group">
-      <Link href={`/spaces/${space._id}`} className="block">
+      <Link href={`/articles/${article._id}`} className="block">
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
-              <CardTitle className="break-words">{space.name}</CardTitle>
-              {space.description && (
-                <CardDescription className="break-words">{space.description}</CardDescription>
-              )}
+              <CardTitle className="break-words">{article.title}</CardTitle>
+              <CardDescription className="mt-2 break-words">{contentPreview}</CardDescription>
             </div>
 
             <DropdownMenu>
@@ -78,7 +81,15 @@ export function SpaceCard({ space, onDelete }: SpaceCardProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Clique para ver os artigos</p>
+          {article.tags && article.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {article.tags.map((tag) => (
+                <Badge key={tag} variant="secondary">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Link>
     </Card>
