@@ -40,7 +40,6 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    // Buscar usuário
     const user = await this.userModel.findOne({ email });
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');

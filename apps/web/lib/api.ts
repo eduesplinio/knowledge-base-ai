@@ -1,5 +1,4 @@
 async function getAuthHeaders() {
-  // Pega o token da sessão NextAuth
   const session = await fetch('/api/auth/session').then((res) => res.json());
 
   return {
@@ -36,6 +35,51 @@ export async function createSpace(data: { name: string; description?: string }) 
 
   if (!res.ok) {
     throw new Error('Erro ao criar espaço');
+  }
+
+  return res.json();
+}
+
+export async function fetchSpace(id: string) {
+  const headers = await getAuthHeaders();
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/spaces/${id}`, {
+    headers,
+  });
+
+  if (!res.ok) {
+    throw new Error('Erro ao buscar espaço');
+  }
+
+  return res.json();
+}
+
+export async function updateSpace(id: string, data: { name: string; description?: string }) {
+  const headers = await getAuthHeaders();
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/spaces/${id}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error('Erro ao atualizar espaço');
+  }
+
+  return res.json();
+}
+
+export async function deleteSpace(id: string) {
+  const headers = await getAuthHeaders();
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/spaces/${id}`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  if (!res.ok) {
+    throw new Error('Erro ao deletar espaço');
   }
 
   return res.json();

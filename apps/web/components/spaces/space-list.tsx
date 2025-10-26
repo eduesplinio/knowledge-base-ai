@@ -8,9 +8,10 @@ interface Space {
 
 interface SpaceListProps {
   spaces: Space[];
+  onDeleteClick?: (space: Space) => void;
 }
 
-export function SpaceList({ spaces }: SpaceListProps) {
+export function SpaceList({ spaces, onDeleteClick }: SpaceListProps) {
   if (spaces.length === 0) {
     return (
       <div className="text-center py-12">
@@ -22,7 +23,7 @@ export function SpaceList({ spaces }: SpaceListProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {spaces.map((space) => (
-        <SpaceCard key={space._id} space={space} />
+        <SpaceCard key={space._id} space={space} onDelete={() => onDeleteClick?.(space)} />
       ))}
     </div>
   );
