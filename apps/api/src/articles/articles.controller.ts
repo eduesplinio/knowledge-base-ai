@@ -7,37 +7,23 @@ import {
   Patch,
   Post,
   Query,
-  Request,
-  UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { AuthGuard } from '../auth/guard/auth.guard';
 
 @ApiTags('articles')
-@ApiBearerAuth()
 @Controller('articles')
-@UseGuards(AuthGuard)
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
   @Post()
   @ApiOperation({ summary: 'Criar novo artigo' })
   @ApiResponse({ status: 201, description: 'Artigo criado com sucesso' })
-  @ApiResponse({ status: 401, description: 'Não autenticado' })
-  create(
-    @Body() createArticleDto: CreateArticleDto,
-    @Request() req: { user: { userId: string } },
-  ) {
-    return this.articlesService.create(createArticleDto, req.user.userId);
+  create(@Body() createArticleDto: CreateArticleDto) {
+    // TODO: Get user ID from session when needed
+    return this.articlesService.create(createArticleDto, 'temp-user-id');
   }
 
   @Get()

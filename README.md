@@ -66,8 +66,21 @@ Variáveis necessárias:
 - `NEXT_PUBLIC_API_URL` - URL da API (http://localhost:3001)
 - `NEXTAUTH_URL` - URL da aplicação (http://localhost:3000)
 - `NEXTAUTH_SECRET` - Chave secreta para NextAuth
-- `GITHUB_ID` - GitHub OAuth Client ID (opcional)
-- `GITHUB_SECRET` - GitHub OAuth Client Secret (opcional)
+- `GITHUB_ID` - GitHub OAuth Client ID (obrigatório)
+- `GITHUB_SECRET` - GitHub OAuth Client Secret (obrigatório)
+
+#### Como configurar GitHub OAuth
+
+1. Acesse [GitHub Developer Settings](https://github.com/settings/developers)
+2. Clique em "New OAuth App"
+3. Preencha:
+   - **Application name**: Knowledge Base AI (ou qualquer nome)
+   - **Homepage URL**: `http://localhost:3000`
+   - **Authorization callback URL**: `http://localhost:3000/api/auth/callback/github`
+4. Clique em "Register application"
+5. Copie o **Client ID** e cole em `GITHUB_ID`
+6. Clique em "Generate a new client secret"
+7. Copie o **Client Secret** e cole em `GITHUB_SECRET`
 
 ## Configuração do MongoDB Atlas
 
@@ -84,11 +97,9 @@ Variáveis necessárias:
 
 ## Autenticação
 
-O sistema usa JWT (JSON Web Tokens) para autenticação. Após o login ou registro, o token é retornado e deve ser incluído no header `Authorization` das requisições:
+O sistema usa **GitHub OAuth** via NextAuth.js para autenticação. Ao fazer login, você será redirecionado para o GitHub para autorizar a aplicação.
 
-```
-Authorization: Bearer <seu-token-jwt>
-```
+````
 
 ### Endpoints de Autenticação
 
@@ -103,7 +114,7 @@ Authorization: Bearer <seu-token-jwt>
 ```bash
 pnpm clean
 pnpm install
-```
+````
 
 ### Erro de porta em uso
 

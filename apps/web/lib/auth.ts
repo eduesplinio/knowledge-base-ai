@@ -1,52 +1,11 @@
 import { AuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
+import GitHubProvider from 'next-auth/providers/github';
 
 export const authOptions: AuthOptions = {
   providers: [
-    CredentialsProvider({
-      name: 'Credentials',
-      credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
-        try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-          });
-
-          if (!res.ok) {
-            return null;
-          }
-
-          const data = await res.json();
-
-          if (data.access_token && data.user) {
-            return {
-              id: data.user.id,
-              email: data.user.email,
-              name: data.user.name,
-              accessToken: data.access_token,
-            };
-          }
-
-          return null;
-        } catch (error) {
-          console.error('Auth error:', error);
-          return null;
-        }
-      },
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
     }),
   ],
   session: {
@@ -56,17 +15,15 @@ export const authOptions: AuthOptions = {
     signIn: '/login',
   },
   callbacks: {
-    async jwt({ token, user }: any) {
+    async jwt({ token, user, account }: any) {
       if (user) {
         token.id = user.id;
-        token.accessToken = user.accessToken;
       }
       return token;
     },
     async session({ session, token }: any) {
       if (session.user) {
         session.user.id = token.id;
-        session.accessToken = token.accessToken;
       }
       return session;
     },

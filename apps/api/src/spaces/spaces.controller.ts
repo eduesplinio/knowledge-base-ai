@@ -6,36 +6,23 @@ import {
   Param,
   Patch,
   Post,
-  Request,
-  UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SpacesService } from './spaces.service';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
-import { AuthGuard } from '../auth/guard/auth.guard';
 
 @ApiTags('spaces')
-@ApiBearerAuth()
 @Controller('spaces')
-@UseGuards(AuthGuard)
 export class SpacesController {
   constructor(private readonly spacesService: SpacesService) {}
 
   @Post()
   @ApiOperation({ summary: 'Criar novo space' })
   @ApiResponse({ status: 201, description: 'Space criado com sucesso' })
-  @ApiResponse({ status: 401, description: 'Não autenticado' })
-  create(
-    @Body() createSpaceDto: CreateSpaceDto,
-    @Request() req: { user: { userId: string } },
-  ) {
-    return this.spacesService.create(createSpaceDto, req.user.userId);
+  create(@Body() createSpaceDto: CreateSpaceDto) {
+    // TODO: Get user ID from session when needed
+    return this.spacesService.create(createSpaceDto, 'temp-user-id');
   }
 
   @Get()
