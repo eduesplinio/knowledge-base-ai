@@ -1,10 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ArticleForm } from '@/components/articles/article-form';
 import { createArticle } from '@/lib/api';
 
-export default function NewArticlePage() {
+function NewArticleContent() {
   const searchParams = useSearchParams();
   const spaceId = searchParams.get('spaceId');
 
@@ -36,5 +37,13 @@ export default function NewArticlePage() {
         submitLabel="Salvar"
       />
     </div>
+  );
+}
+
+export default function NewArticlePage() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <NewArticleContent />
+    </Suspense>
   );
 }
