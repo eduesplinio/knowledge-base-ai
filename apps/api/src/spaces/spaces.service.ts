@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { Space } from './schemas/space.schema';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
@@ -22,6 +26,9 @@ export class SpacesService {
   }
 
   async findOne(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException(`ID ${id} inválido`);
+    }
     const space = await this.spaceModel.findById(id).exec();
     if (!space) {
       throw new NotFoundException(`Espaço com ID ${id} não encontrado`);
@@ -30,6 +37,9 @@ export class SpacesService {
   }
 
   async update(id: string, updateSpaceDto: UpdateSpaceDto) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException(`ID ${id} inválido`);
+    }
     const space = await this.spaceModel
       .findByIdAndUpdate(id, updateSpaceDto, { new: true })
       .exec();
@@ -40,6 +50,9 @@ export class SpacesService {
   }
 
   async remove(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException(`ID ${id} inválido`);
+    }
     const result = await this.spaceModel.findByIdAndDelete(id).exec();
     if (!result) {
       throw new NotFoundException(`Espaço com ID ${id} não encontrado`);

@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { Article } from './schemas/article.schema';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -26,27 +30,36 @@ export class ArticlesService {
   }
 
   async findOne(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException(`ID ${id} inválido`);
+    }
     const article = await this.articleModel.findById(id).exec();
     if (!article) {
-      throw new NotFoundException(`Article com ID ${id} não encontrado`);
+      throw new NotFoundException(`Artigo com ID ${id} não encontrado`);
     }
     return article;
   }
 
   async update(id: string, updateArticleDto: UpdateArticleDto) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException(`ID ${id} inválido`);
+    }
     const article = await this.articleModel
       .findByIdAndUpdate(id, updateArticleDto, { new: true })
       .exec();
     if (!article) {
-      throw new NotFoundException(`Article com ID ${id} não encontrado`);
+      throw new NotFoundException(`Artigo com ID ${id} não encontrado`);
     }
     return article;
   }
 
   async remove(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException(`ID ${id} inválido`);
+    }
     const result = await this.articleModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new NotFoundException(`Article com ID ${id} não encontrado`);
+      throw new NotFoundException(`Artigo com ID ${id} não encontrado`);
     }
     return result;
   }
