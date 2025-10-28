@@ -24,7 +24,7 @@ export class SpacesService {
   async findOne(id: string) {
     const space = await this.spaceModel.findById(id).exec();
     if (!space) {
-      throw new NotFoundException(`Space com ID ${id} não encontrado`);
+      throw new NotFoundException(`Espaço com ID ${id} não encontrado`);
     }
     return space;
   }
@@ -34,7 +34,7 @@ export class SpacesService {
       .findByIdAndUpdate(id, updateSpaceDto, { new: true })
       .exec();
     if (!space) {
-      throw new NotFoundException(`Space com ID ${id} não encontrado`);
+      throw new NotFoundException(`Espaço com ID ${id} não encontrado`);
     }
     return space;
   }
@@ -42,7 +42,7 @@ export class SpacesService {
   async remove(id: string) {
     const result = await this.spaceModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new NotFoundException(`Space com ID ${id} não encontrado`);
+      throw new NotFoundException(`Espaço com ID ${id} não encontrado`);
     }
     return result;
   }

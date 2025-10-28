@@ -18,40 +18,39 @@ export class SpacesController {
   constructor(private readonly spacesService: SpacesService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Criar novo space' })
-  @ApiResponse({ status: 201, description: 'Space criado com sucesso' })
+  @ApiOperation({ summary: 'Criar novo espaço' })
+  @ApiResponse({ status: 201, description: 'Espaço criado com sucesso' })
   create(@Body() createSpaceDto: CreateSpaceDto) {
-    // TODO: Get user ID from session when needed
     return this.spacesService.create(createSpaceDto, 'temp-user-id');
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todos os spaces' })
-  @ApiResponse({ status: 200, description: 'Lista de spaces' })
+  @ApiOperation({ summary: 'Listar todos os espaços' })
+  @ApiResponse({ status: 200, description: 'Lista de espaços' })
   findAll() {
     return this.spacesService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Buscar space por ID' })
-  @ApiResponse({ status: 200, description: 'Space encontrado' })
-  @ApiResponse({ status: 404, description: 'Space não encontrado' })
+  @ApiOperation({ summary: 'Buscar espaço por ID' })
+  @ApiResponse({ status: 200, description: 'Espaço encontrado' })
+  @ApiResponse({ status: 404, description: 'Espaço não encontrado' })
   findOne(@Param('id') id: string) {
     return this.spacesService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualizar space' })
-  @ApiResponse({ status: 200, description: 'Space atualizado com sucesso' })
-  @ApiResponse({ status: 404, description: 'Space não encontrado' })
+  @ApiOperation({ summary: 'Atualizar espaço' })
+  @ApiResponse({ status: 200, description: 'Espaço atualizado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Espaço não encontrado' })
   update(@Param('id') id: string, @Body() updateSpaceDto: UpdateSpaceDto) {
     return this.spacesService.update(id, updateSpaceDto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Deletar space' })
-  @ApiResponse({ status: 200, description: 'Space deletado com sucesso' })
-  @ApiResponse({ status: 404, description: 'Space não encontrado' })
+  @ApiOperation({ summary: 'Deletar espaço' })
+  @ApiResponse({ status: 200, description: 'Espaço deletado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Espaço não encontrado' })
   remove(@Param('id') id: string) {
     return this.spacesService.remove(id);
   }

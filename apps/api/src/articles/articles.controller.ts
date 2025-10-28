@@ -22,7 +22,6 @@ export class ArticlesController {
   @ApiOperation({ summary: 'Criar novo artigo' })
   @ApiResponse({ status: 201, description: 'Artigo criado com sucesso' })
   create(@Body() createArticleDto: CreateArticleDto) {
-    // TODO: Get user ID from session when needed
     return this.articlesService.create(createArticleDto, 'temp-user-id');
   }
 
