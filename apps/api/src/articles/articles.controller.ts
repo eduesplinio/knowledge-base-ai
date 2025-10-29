@@ -12,6 +12,7 @@ import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { GenerateContentDto } from './dto/generate-content.dto';
 
 @ApiTags('articles')
 @Controller('articles')
@@ -59,5 +60,12 @@ export class ArticlesController {
   @ApiResponse({ status: 404, description: 'Artigo não encontrado' })
   remove(@Param('id') id: string) {
     return this.articlesService.remove(id);
+  }
+
+  @Post('generate')
+  @ApiOperation({ summary: 'Gerar conteúdo com IA' })
+  @ApiResponse({ status: 201, description: 'Conteúdo gerado com sucesso' })
+  async generateContent(@Body() generateContentDto: GenerateContentDto) {
+    return this.articlesService.generateContent(generateContentDto);
   }
 }

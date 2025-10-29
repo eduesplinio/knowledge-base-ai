@@ -8,11 +8,14 @@ import { Model, isValidObjectId } from 'mongoose';
 import { Article } from './schemas/article.schema';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { GenerateContentDto } from './dto/generate-content.dto';
+import { AiService } from '../ai/ai.service';
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<Article>,
+    private readonly aiService: AiService,
   ) {}
 
   async create(createArticleDto: CreateArticleDto, userId: string) {
@@ -62,5 +65,18 @@ export class ArticlesService {
       throw new NotFoundException(`Artigo com ID ${id} não encontrado`);
     }
     return result;
+  }
+
+  async generateContent(generateContentDto: GenerateContentDto) {
+    const response = await this.aiService.generateContent({
+      prompt: generateContentDto.prompt,
+      temperature: generateContentDto.temperature,
+      maxTokens: generateContentDto.maxTokens,
+    });
+
+    return {
+      content: response.content,
+      tokensUsed: response.tokensUsed,
+    };
   }
 }
