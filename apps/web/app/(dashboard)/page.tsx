@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { SpaceList } from '@/components/spaces/space-list';
 import { fetchSpaces, deleteSpace } from '@/lib/api';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +14,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@workspace/ui/components/alert-dialog';
-import { MdSearch } from 'react-icons/md';
 import Link from 'next/link';
 
 interface Space {
@@ -30,7 +28,6 @@ export default function DashboardPage() {
   const [error, setError] = useState('');
   const [spaceToDelete, setSpaceToDelete] = useState<Space | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     async function loadSpaces() {
@@ -72,16 +69,6 @@ export default function DashboardPage() {
     setSpaceToDelete(null);
   };
 
-  const filteredSpaces = spaces.filter((space) => {
-    if (!searchQuery.trim()) return true;
-
-    const query = searchQuery.toLowerCase();
-    const name = space.name.toLowerCase();
-    const desc = (space.description || '').toLowerCase();
-
-    return name.includes(query) || desc.includes(query);
-  });
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -100,30 +87,14 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-6">Espaços</h1>
-        <div className="flex items-center justify-between gap-4">
-          <Link href="/spaces/new">
-            <Button>Novo Espaço</Button>
-          </Link>
-          <div className="relative flex-1 max-w-md">
-            <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Buscar espaços..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </div>
+      <div className="space-y-6 mb-8">
+        <h1 className="text-3xl font-bold">Espaços</h1>
+        <Link href="/spaces/new">
+          <Button>Novo Espaço</Button>
+        </Link>
       </div>
 
-      <SpaceList
-        spaces={filteredSpaces}
-        onDeleteClick={handleDeleteClick}
-        searchQuery={searchQuery}
-      />
+      <SpaceList spaces={spaces} onDeleteClick={handleDeleteClick} />
 
       <AlertDialog open={!!spaceToDelete} onOpenChange={handleDeleteCancel}>
         <AlertDialogContent>

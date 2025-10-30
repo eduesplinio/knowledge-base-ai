@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { MdArrowBack, MdSearch } from 'react-icons/md';
+import { MdArrowBack } from 'react-icons/md';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
 import Link from 'next/link';
 import { ArticleList } from '@/components/articles/article-list';
 import { fetchSpace, fetchArticles, deleteArticle } from '@/lib/api';
@@ -41,7 +40,6 @@ export default function SpaceDetailPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     loadData();
@@ -92,17 +90,6 @@ export default function SpaceDetailPage() {
     );
   }
 
-  const filteredArticles = articles.filter((article) => {
-    if (!searchQuery.trim()) return true;
-
-    const query = searchQuery.toLowerCase();
-    const title = article.title.toLowerCase();
-    const content = article.content.toLowerCase();
-    const tags = article.tags.join(' ').toLowerCase();
-
-    return title.includes(query) || content.includes(query) || tags.includes(query);
-  });
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -119,23 +106,9 @@ export default function SpaceDetailPage() {
         <Link href={`/articles/new?spaceId=${spaceId}`}>
           <Button>Novo Artigo</Button>
         </Link>
-        <div className="relative flex-1 max-w-md">
-          <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Buscar artigos..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
       </div>
 
-      <ArticleList
-        articles={filteredArticles}
-        onDelete={(id) => setDeleteId(id)}
-        searchQuery={searchQuery}
-      />
+      <ArticleList articles={articles} onDelete={(id) => setDeleteId(id)} />
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>

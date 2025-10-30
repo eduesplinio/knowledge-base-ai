@@ -47,8 +47,9 @@ export class ArticlesController {
     description: 'Limite de resultados',
   })
   @ApiResponse({ status: 200, description: 'Resultados da busca' })
-  async search(@Query('q') query: string, @Query('limit') limit?: number) {
-    return this.articlesService.searchArticles(query, limit);
+  async search(@Query('q') query: string, @Query('limit') limit?: string) {
+    const limitNumber = limit ? parseInt(limit, 10) : undefined;
+    return this.articlesService.searchArticles(query, limitNumber);
   }
 
   @Get(':id')
