@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { SearchResults } from '@/components/search/search-results';
 
 interface SearchResult {
@@ -14,7 +14,7 @@ interface SearchResult {
   createdAt: string;
 }
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
 
@@ -81,5 +81,19 @@ export default function SearchPage() {
       <h1 className="text-3xl font-bold mb-6">Resultados da Busca</h1>
       <SearchResults results={results} query={query} />
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      }
+    >
+      <SearchContent />
+    </Suspense>
   );
 }
