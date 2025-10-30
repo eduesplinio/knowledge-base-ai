@@ -132,4 +132,54 @@ export class ArticlesService {
       tokensUsed: response.tokensUsed,
     };
   }
+  async searchArticles(query: string, limit: number = 10): Promise<any[]> {
+    if (!query || query.trim().length === 0) {
+      throw new BadRequestException('Query de busca não pode ser vazia');
+    }
+
+    try {
+      this.logger.log(`Buscando artigos para query: "${query}"`);
+
+      const queryEmbedding = await this.aiService.generateEmbedding(query);
+
+      if (!queryEmbedding) {
+        throw new BadRequestException(
+          'Não foi possível gerar embedding da busca',
+        );
+      }
+
+      const results = await this.articleModel.aggregate([
+        {
+          $vectorSearch: {
+            index: 'vector_index',
+            path: 'content_vector',
+            queryVector: queryEmbedding,
+            numCandidates: 100,
+            limit: limit,
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            content: 1,
+            spaceId: 1,
+            authorId: 1,
+            tags: 1,
+            createdAt: 1,
+            score: { $meta: 'vectorSearchScore' },
+          },
+        },
+      ]);
+
+      this.logger.log(`Encontrados ${results.length} resultados`);
+
+      return results;
+    } catch (error) {
+      this.logger.error(
+        `Erro na busca vetorial: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
+      );
+      throw error;
+    }
+  }
 }

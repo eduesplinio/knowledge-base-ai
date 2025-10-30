@@ -38,6 +38,19 @@ export class ArticlesController {
     return this.articlesService.findAll(spaceId);
   }
 
+  @Get('search')
+  @ApiOperation({ summary: 'Buscar artigos por similaridade semântica' })
+  @ApiQuery({ name: 'q', description: 'Query de busca' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Limite de resultados',
+  })
+  @ApiResponse({ status: 200, description: 'Resultados da busca' })
+  async search(@Query('q') query: string, @Query('limit') limit?: number) {
+    return this.articlesService.searchArticles(query, limit);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Buscar artigo por ID' })
   @ApiResponse({ status: 200, description: 'Artigo encontrado' })
