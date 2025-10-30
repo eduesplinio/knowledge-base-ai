@@ -7,12 +7,25 @@ import {
   Patch,
   Post,
   Query,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { GenerateContentDto } from './dto/generate-content.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as fs from 'fs/promises';
+import { UploadArticleDto } from './dto/upload-article.dto';
 
 @ApiTags('articles')
 @Controller('articles')
@@ -81,5 +94,65 @@ export class ArticlesController {
   @ApiResponse({ status: 201, description: 'Conteúdo gerado com sucesso' })
   async generateContent(@Body() generateContentDto: GenerateContentDto) {
     return this.articlesService.generateContent(generateContentDto);
+  }
+
+  @Post('upload')
+  @ApiOperation({ summary: 'Fazer upload de arquivo .md ou .txt como artigo' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Arquivo .md ou .txt',
+        },
+        spaceId: {
+          type: 'string',
+          description: 'ID do espaço',
+        },
+        tags: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Tags do artigo',
+        },
+      },
+      required: ['file', 'spaceId'],
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Artigo criado a partir do arquivo',
+  })
+  @ApiResponse({ status: 400, description: 'Arquivo inválido ou não enviado' })
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadArticle(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() uploadDto: UploadArticleDto,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Nenhum arquivo foi enviado');
+    }
+
+    try {
+      const content = await fs.readFile(file.path, 'utf-8');
+
+      const article = await this.articlesService.createFromFile(
+        content,
+        file.originalname,
+        uploadDto.spaceId,
+        'temp-user-id',
+        uploadDto.tags,
+      );
+      await fs.unlink(file.path);
+
+      return article;
+    } catch (error) {
+      if (file?.path) {
+        await fs.unlink(file.path).catch(() => {});
+      }
+      throw error;
+    }
   }
 }

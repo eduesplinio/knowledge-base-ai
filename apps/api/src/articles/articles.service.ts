@@ -182,4 +182,40 @@ export class ArticlesService {
       throw error;
     }
   }
+  async createFromFile(
+    fileContent: string,
+    fileName: string,
+    spaceId: string,
+    userId: string,
+    tags: string[] = [],
+  ) {
+    const title = fileName.replace(/\.(md|txt)$/i, '');
+
+    let embedding: number[] | null = null;
+
+    try {
+      this.logger.log(`Gerando embedding para artigo do arquivo: ${fileName}`);
+      embedding = await this.aiService.generateEmbedding(fileContent);
+
+      if (embedding) {
+        this.logger.log(
+          `Embedding gerado com sucesso (${embedding.length} dimensões)`,
+        );
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Erro ao gerar embedding: ${error instanceof Error ? error.message : 'Erro desconhecido'}. Artigo será salvo sem embedding.`,
+      );
+    }
+    const article = new this.articleModel({
+      title,
+      content: fileContent,
+      spaceId,
+      authorId: userId,
+      tags,
+      content_vector: embedding,
+    });
+
+    return await article.save();
+  }
 }
