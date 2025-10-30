@@ -7,6 +7,7 @@ import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { ArticleList } from '@/components/articles/article-list';
 import { fetchSpace, fetchArticles, deleteArticle } from '@/lib/api';
+import { FileUpload } from '@/components/articles/file-upload';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -106,6 +107,7 @@ export default function SpaceDetailPage() {
         <Link href={`/articles/new?spaceId=${spaceId}`}>
           <Button>Novo Artigo</Button>
         </Link>
+        <FileUpload spaceId={spaceId} />
       </div>
 
       <ArticleList articles={articles} onDelete={(id) => setDeleteId(id)} />
