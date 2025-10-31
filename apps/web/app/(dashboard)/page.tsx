@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { SpaceList } from '@/components/spaces/space-list';
-import { fetchSpaces, deleteSpace } from '@/lib/api';
+import { SpaceCard } from '@/components/spaces/space-card';
+import { fetchSpaces, deleteSpace, createSpace, updateSpace } from '@/lib/api';
 import { Button } from '@workspace/ui/components/button';
 import {
   AlertDialog,
@@ -14,7 +14,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@workspace/ui/components/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
+import { Input } from '@workspace/ui/components/input';
+import { Textarea } from '@workspace/ui/components/textarea';
+import { MdAdd, MdMenuBook } from 'react-icons/md';
 import Link from 'next/link';
+import { SearchBar } from '@/components/search/search-bar';
 
 interface Space {
   _id: string;
@@ -28,6 +33,11 @@ export default function DashboardPage() {
   const [error, setError] = useState('');
   const [spaceToDelete, setSpaceToDelete] = useState<Space | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSpace, setEditingSpace] = useState<Space | null>(null);
+  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [isSaving, setIsSaving] = useState(false);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadSpaces() {
@@ -47,6 +57,7 @@ export default function DashboardPage() {
 
   const handleDeleteClick = (space: Space) => {
     setSpaceToDelete(space);
+    setOpenDropdownId(null);
   };
 
   const handleDeleteConfirm = async () => {
@@ -67,42 +78,139 @@ export default function DashboardPage() {
 
   const handleDeleteCancel = () => {
     setSpaceToDelete(null);
+    setOpenDropdownId(null);
+  };
+
+  const handleCreateSpace = () => {
+    setEditingSpace(null);
+    setFormData({ name: '', description: '' });
+    setIsModalOpen(true);
+  };
+
+  const handleEditSpace = (space: Space) => {
+    setEditingSpace(space);
+    setFormData({ name: space.name, description: space.description || '' });
+    setOpenDropdownId(null);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setEditingSpace(null);
+    setFormData({ name: '', description: '' });
+    setOpenDropdownId(null);
+  };
+
+  const handleSaveSpace = async () => {
+    if (!formData.name.trim()) return;
+
+    setIsSaving(true);
+    try {
+      if (editingSpace) {
+        // Editar espaço existente
+        const updatedSpace = await updateSpace(editingSpace._id, formData);
+        setSpaces(spaces.map((s) => (s._id === editingSpace._id ? updatedSpace : s)));
+      } else {
+        // Criar novo espaço
+        const newSpace = await createSpace(formData);
+        setSpaces([...spaces, newSpace]);
+      }
+      handleModalClose();
+    } catch (err) {
+      console.error('Erro ao salvar espaço:', err);
+      alert('Erro ao salvar espaço');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const truncateText = (text: string, maxLength: number = 50) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Carregando...</p>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">Carregando espaços...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-destructive">{error}</p>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center space-y-4">
+          <p className="text-destructive text-lg">{error}</p>
+          <Button onClick={() => window.location.reload()}>Tentar novamente</Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="space-y-6 mb-8">
-        <h1 className="text-3xl font-bold">Espaços</h1>
-        <Link href="/spaces/new">
-          <Button>Novo Espaço</Button>
-        </Link>
+    <div className="min-h-[80vh]">
+      <div className="text-center space-y-6 py-12 max-w-3xl mx-auto">
+        <div className="flex justify-center">
+          <MdMenuBook className="w-16 h-16 text-muted-foreground" />
+        </div>
+
+        <div className="space-y-2">
+          <h1 className="text-4xl font-normal tracking-tight">Base de Conhecimento</h1>
+          <p className="text-muted-foreground text-lg">
+            Seu conhecimento organizado e acessível com IA.
+          </p>
+        </div>
+
+        <div className="max-w-lg mx-auto">
+          <SearchBar />
+        </div>
       </div>
 
-      <SpaceList spaces={spaces} onDeleteClick={handleDeleteClick} />
+      <div className="max-w-5xl mx-auto pb-12">
+        <div className="flex flex-wrap gap-4">
+          <div
+            onClick={handleCreateSpace}
+            className="group relative overflow-hidden rounded-md border border-border bg-gradient-to-br from-muted/40 to-muted/20 hover:from-muted/60 hover:to-muted/40 hover:border-border transition-all duration-200 cursor-pointer w-[320px] h-[148px]"
+          >
+            <div className="p-3 h-full flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1.5 mb-2">
+                  <MdAdd className="w-[22px] h-[22px] text-primary flex-shrink-0" />
+                  <div className="text-base font-light group-hover:text-primary transition-colors">
+                    Adicionar espaço
+                  </div>
+                </div>
+                <div className="text-xs text-muted-foreground/60">Criar novo espaço</div>
+              </div>
+            </div>
+          </div>
+
+          {spaces.map((space) => (
+            <SpaceCard
+              key={space._id}
+              space={space}
+              onDelete={() => handleDeleteClick(space)}
+              onEdit={() => handleEditSpace(space)}
+              isDropdownOpen={openDropdownId === space._id}
+              onDropdownChange={(open) => setOpenDropdownId(open ? space._id : null)}
+            />
+          ))}
+        </div>
+      </div>
 
       <AlertDialog open={!!spaceToDelete} onOpenChange={handleDeleteCancel}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
-              Você está prestes a deletar o espaço &quot;{spaceToDelete?.name}&quot;. Esta ação não
-              pode ser desfeita e todos os artigos deste espaço serão perdidos.
+              Você está prestes a deletar o espaço &quot;
+              <span className="font-semibold">{truncateText(spaceToDelete?.name || '', 50)}</span>
+              &quot;. Esta ação não pode ser desfeita e todos os artigos deste espaço serão
+              perdidos.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -113,6 +221,58 @@ export default function DashboardPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="pb-4">
+            <DialogTitle>{editingSpace ? 'Editar Espaço' : 'Criar Novo Espaço'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium block">Nome</label>
+              <Input
+                value={formData.name}
+                onChange={(e) => {
+                  if (e.target.value.length <= 50) {
+                    setFormData({ ...formData, name: e.target.value });
+                  }
+                }}
+                placeholder="Nome do espaço"
+                maxLength={50}
+              />
+              <div className="text-xs text-muted-foreground text-right">
+                {formData.name.length}/50
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium block">Descrição</label>
+              <Textarea
+                value={formData.description}
+                onChange={(e) => {
+                  if (e.target.value.length <= 150) {
+                    setFormData({ ...formData, description: e.target.value });
+                  }
+                }}
+                placeholder="Descrição do espaço (opcional)"
+                rows={3}
+                maxLength={150}
+                className="resize-none"
+              />
+              <div className="text-xs text-muted-foreground text-right">
+                {formData.description.length}/150
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={handleModalClose} disabled={isSaving}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveSpace} disabled={isSaving || !formData.name.trim()}>
+              {isSaving ? 'Salvando...' : editingSpace ? 'Salvar' : 'Criar'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

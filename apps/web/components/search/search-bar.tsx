@@ -17,15 +17,15 @@ export function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSearch} className="relative w-full max-w-md">
-      <MdSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <form onSubmit={handleSearch} className="relative w-full">
+      <MdSearch className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
       <Input
         type="search"
-        placeholder="Buscar artigos..."
+        placeholder="O que você está procurando?"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="pl-10"
-      ></Input>
+        className="pl-10 h-11 rounded-md"
+      />
     </form>
   );
 }
