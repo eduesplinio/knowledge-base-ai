@@ -5,7 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { MdArrowBack, MdEdit, MdDelete } from 'react-icons/md';
 import { Button } from '@workspace/ui/components/button';
 import { ArticleViewer } from '@/components/articles/article-viewer';
-import { fetchArticle, deleteArticle } from '@/lib/api';
+import { fetchArticle, deleteArticle, fetchSpace } from '@/lib/api';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +24,7 @@ export default function ArticleViewPage() {
   const articleId = params.id as string;
 
   const [article, setArticle] = useState<any>(null);
+  const [space, setSpace] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -33,8 +35,13 @@ export default function ArticleViewPage() {
   const loadArticle = async () => {
     try {
       setIsLoading(true);
-      const data = await fetchArticle(articleId);
-      setArticle(data);
+      const articleData = await fetchArticle(articleId);
+      setArticle(articleData);
+
+      if (articleData.spaceId) {
+        const spaceData = await fetchSpace(articleData.spaceId);
+        setSpace(spaceData);
+      }
     } catch (error) {
       console.error('Erro ao carregar artigo:', error);
     } finally {
@@ -69,14 +76,13 @@ export default function ArticleViewPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => router.push(`/spaces/${article.spaceId}`)}
-        >
-          <MdArrowBack className="h-5 w-5" />
-        </Button>
+      {space && (
+        <Breadcrumbs
+          items={[{ label: space.name, href: `/spaces/${space._id}` }, { label: article.title }]}
+        />
+      )}
+
+      <div className="flex justify-end">
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => router.push(`/articles/${articleId}/edit`)}>
             <MdEdit className="mr-2 h-5 w-5" />

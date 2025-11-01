@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { ArticleList } from '@/components/articles/article-list';
 import { fetchSpace, fetchArticles, deleteArticle } from '@/lib/api';
 import { FileUpload } from '@/components/articles/file-upload';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -93,14 +94,11 @@ export default function SpaceDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
-          <MdArrowBack className="h-5 w-5" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold">{space.name}</h1>
-          {space.description && <p className="text-muted-foreground mt-1">{space.description}</p>}
-        </div>
+      <Breadcrumbs items={[{ label: space.name }]} />
+
+      <div>
+        <h1 className="text-3xl font-bold">{space.name}</h1>
+        {space.description && <p className="text-muted-foreground mt-1">{space.description}</p>}
       </div>
 
       <div className="flex items-center justify-between gap-4">

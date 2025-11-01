@@ -174,3 +174,20 @@ export async function deleteArticle(id: string) {
 
   return res.json();
 }
+
+export async function searchArticles(query: string) {
+  const headers = await getAuthHeaders();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/articles/search?q=${encodeURIComponent(query)}`,
+    {
+      headers,
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error('Erro na pesquisa');
+  }
+
+  return res.json();
+}

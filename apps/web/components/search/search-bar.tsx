@@ -24,7 +24,7 @@ export function SearchBar() {
         placeholder="O que você está procurando?"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="pl-10 h-11 rounded-md"
+        className="pl-10 h-9 rounded-md bg-background/50 border-muted-foreground/20 text-sm placeholder:text-muted-foreground/60"
       />
     </form>
   );
