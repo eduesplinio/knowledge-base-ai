@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { MdFolder, MdArrowForward, MdMoreVert, MdEdit, MdDelete } from 'react-icons/md';
+import { IoMdBook } from 'react-icons/io';
+import { MdArrowForward, MdMoreVert, MdEdit, MdDelete } from 'react-icons/md';
 import { Card } from '@workspace/ui/components/card';
 import {
   DropdownMenu,
@@ -53,18 +54,19 @@ export function SpaceCard({
 
   return (
     <Card
-      className={`group relative overflow-hidden rounded-md border-border bg-transparent hover:bg-accent/50 transition-colors w-[320px] h-[148px] ${isDropdownOpen ? 'bg-accent/50' : ''}`}
+      className={`group relative overflow-hidden rounded-md border-border bg-transparent hover:bg-accent/50 transition-colors w-[380px] lg:w-[300px] h-[120px] ${isDropdownOpen ? 'bg-accent/50' : ''}`}
     >
       <Link href={`/spaces/${space._id}`} className="block p-3 h-full relative">
-        <div className="flex h-full flex-col pr-6">
-          <div className="flex items-center gap-1.5 mb-3">
-            <MdFolder className="w-[22px] h-[22px] text-muted-foreground flex-shrink-0" />
-            <div className="text-base font-light flex-1 min-w-0">{space.name}</div>
-          </div>
-
-          <div className="flex-1">
+        <div className="pr-6">
+          <div>
+            <div className="flex items-center gap-1.5 mb-2">
+              <IoMdBook className="w-[22px] h-[22px] text-muted-foreground flex-shrink-0" />
+              <div className="text-base font-light flex-1 min-w-0 leading-tight break-words line-clamp-2">
+                {space.name}
+              </div>
+            </div>
             {space.description && (
-              <div className="text-sm text-muted-foreground/80 leading-relaxed line-clamp-2">
+              <div className="text-sm text-muted-foreground/80 leading-tight line-clamp-2 break-words overflow-hidden">
                 {space.description}
               </div>
             )}
@@ -75,7 +77,7 @@ export function SpaceCard({
           <MdArrowForward className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         </div>
 
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-2 right-3 flex justify-end">
           <DropdownMenu open={isDropdownOpen} onOpenChange={onDropdownChange}>
             <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
               <Button

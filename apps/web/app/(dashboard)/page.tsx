@@ -170,11 +170,11 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto pb-12">
-        <div className="flex flex-wrap gap-4">
+      <div className="max-w-5xl mx-auto pb-12 px-4">
+        <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
           <div
             onClick={handleCreateSpace}
-            className="group relative overflow-hidden rounded-md border border-border bg-gradient-to-br from-muted/40 to-muted/20 hover:from-muted/60 hover:to-muted/40 hover:border-border transition-all duration-200 cursor-pointer w-[320px] h-[148px]"
+            className="group relative overflow-hidden rounded-md border border-border bg-gradient-to-br from-slate-100 from-10% via-blue-100 via-40% to-indigo-200 to-90% dark:from-slate-700/60 dark:from-10% dark:via-slate-800/50 dark:via-40% dark:to-slate-900/70 dark:to-90% hover:from-slate-200 hover:via-blue-200 hover:to-indigo-300 dark:hover:from-slate-600/70 dark:hover:via-slate-700/60 dark:hover:to-slate-800/80 transition-all duration-300 cursor-pointer w-[380px] lg:w-[300px] h-[120px]"
           >
             <div className="p-3 h-full flex flex-col justify-between">
               <div>
@@ -184,7 +184,7 @@ export default function DashboardPage() {
                     Adicionar espaço
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground/60">Criar novo espaço</div>
+                <div className="text-xs text-muted-foreground/60">Organize temas e artigos</div>
               </div>
             </div>
           </div>
@@ -207,7 +207,7 @@ export default function DashboardPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
-              Você está prestes a deletar o espaço &quot;
+              Você está prestes a excluir o espaço &quot;
               <span className="font-semibold">{truncateText(spaceToDelete?.name || '', 50)}</span>
               &quot;. Esta ação não pode ser desfeita e todos os artigos deste espaço serão
               perdidos.
@@ -216,7 +216,7 @@ export default function DashboardPage() {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteConfirm} disabled={isDeleting}>
-              {isDeleting ? 'Deletando...' : 'Deletar'}
+              {isDeleting ? 'Excluindo...' : 'Excluir'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -225,7 +225,7 @@ export default function DashboardPage() {
       <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="pb-4">
-            <DialogTitle>{editingSpace ? 'Editar Espaço' : 'Criar Novo Espaço'}</DialogTitle>
+            <DialogTitle>{editingSpace ? 'Editar Espaço' : 'Adicionar Espaço'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">
@@ -268,7 +268,7 @@ export default function DashboardPage() {
               Cancelar
             </Button>
             <Button onClick={handleSaveSpace} disabled={isSaving || !formData.name.trim()}>
-              {isSaving ? 'Salvando...' : editingSpace ? 'Salvar' : 'Criar'}
+              {isSaving ? 'Salvando...' : 'Salvar'}
             </Button>
           </div>
         </DialogContent>

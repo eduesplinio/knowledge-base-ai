@@ -23,7 +23,12 @@ export function SearchResults({ results, query }: SearchResultsProps) {
   if (results.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Nenhum resultado encontrado para "{query}"</p>
+        <div className="space-y-3">
+          <p className="text-lg font-medium">Nenhum resultado encontrado</p>
+          <p className="text-muted-foreground">
+            Tente usar palavras-chave diferentes ou mais gerais
+          </p>
+        </div>
       </div>
     );
   }

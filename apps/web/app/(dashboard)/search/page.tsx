@@ -32,7 +32,7 @@ function SearchContent() {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         const response = await fetch(
-          `${apiUrl}/articles/search?q=${encodeURIComponent(query)}&limit=10`
+          `${apiUrl}/articles/search?q=${encodeURIComponent(query)}&limit=5`
         );
 
         if (!response.ok) {
