@@ -37,8 +37,44 @@ export function ArticleViewer({ article }: ArticleViewerProps) {
           </div>
         )}
 
-        <div className="prose prose-sm max-w-none">
-          <ReactMarkdown>{article.content}</ReactMarkdown>
+        <div className="text-foreground leading-relaxed">
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => <p className="mb-4 text-foreground">{children}</p>,
+              h1: ({ children }) => (
+                <h1 className="text-2xl font-bold mb-4 text-foreground">{children}</h1>
+              ),
+              h2: ({ children }) => (
+                <h2 className="text-xl font-semibold mb-3 text-foreground">{children}</h2>
+              ),
+              h3: ({ children }) => (
+                <h3 className="text-lg font-medium mb-2 text-foreground">{children}</h3>
+              ),
+              ul: ({ children }) => (
+                <ul className="list-disc list-inside mb-4 text-foreground">{children}</ul>
+              ),
+              ol: ({ children }) => (
+                <ol className="list-decimal list-inside mb-4 text-foreground">{children}</ol>
+              ),
+              li: ({ children }) => <li className="mb-1 text-foreground">{children}</li>,
+              strong: ({ children }) => (
+                <strong className="font-semibold text-foreground">{children}</strong>
+              ),
+              em: ({ children }) => <em className="italic text-foreground">{children}</em>,
+              code: ({ children }) => (
+                <code className="bg-muted px-1 py-0.5 rounded text-sm text-foreground">
+                  {children}
+                </code>
+              ),
+              pre: ({ children }) => (
+                <pre className="bg-muted p-4 rounded-md overflow-x-auto mb-4 text-foreground">
+                  {children}
+                </pre>
+              ),
+            }}
+          >
+            {article.content}
+          </ReactMarkdown>
         </div>
       </CardContent>
     </Card>

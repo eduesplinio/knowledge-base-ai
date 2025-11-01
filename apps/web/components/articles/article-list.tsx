@@ -10,10 +10,11 @@ interface ArticleListProps {
     tags: string[];
   }>;
   onDelete?: (id: string) => void;
+  onEdit?: (id: string) => void;
   searchQuery?: string;
 }
 
-export function ArticleList({ articles, onDelete, searchQuery }: ArticleListProps) {
+export function ArticleList({ articles, onDelete, onEdit, searchQuery }: ArticleListProps) {
   if (!articles || articles.length === 0) {
     if (searchQuery && searchQuery.trim()) {
       return (
@@ -33,12 +34,13 @@ export function ArticleList({ articles, onDelete, searchQuery }: ArticleListProp
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="w-full px-4 space-y-1">
       {articles.map((article) => (
         <ArticleCard
           key={article._id}
           article={article}
           onDelete={onDelete ? () => onDelete(article._id) : undefined}
+          onEdit={onEdit ? () => onEdit(article._id) : undefined}
         />
       ))}
     </div>

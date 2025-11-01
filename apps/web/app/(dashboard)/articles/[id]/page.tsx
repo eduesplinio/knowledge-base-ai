@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { MdArrowBack, MdEdit, MdDelete } from 'react-icons/md';
+import { MdEdit, MdDelete } from 'react-icons/md';
 import { Button } from '@workspace/ui/components/button';
 import { ArticleViewer } from '@/components/articles/article-viewer';
-import { fetchArticle, deleteArticle, fetchSpace } from '@/lib/api';
+import { fetchArticle, deleteArticle, fetchSpace, updateArticle } from '@/lib/api';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import { Input } from '@workspace/ui/components/input';
+import { Textarea } from '@workspace/ui/components/textarea';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +19,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@workspace/ui/components/alert-dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@workspace/ui/components/tooltip';
 
 export default function ArticleViewPage() {
   const params = useParams();
@@ -27,6 +35,9 @@ export default function ArticleViewPage() {
   const [space, setSpace] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ title: '', content: '', tags: '' });
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     loadArticle();
@@ -42,6 +53,12 @@ export default function ArticleViewPage() {
         const spaceData = await fetchSpace(articleData.spaceId);
         setSpace(spaceData);
       }
+
+      setEditForm({
+        title: articleData.title,
+        content: articleData.content,
+        tags: articleData.tags?.join(', ') || '',
+      });
     } catch (error) {
       console.error('Erro ao carregar artigo:', error);
     } finally {
@@ -55,6 +72,44 @@ export default function ArticleViewPage() {
       router.push(`/spaces/${article.spaceId}`);
     } catch (error) {
       console.error('Erro ao deletar artigo:', error);
+    }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditForm({
+      title: article.title,
+      content: article.content,
+      tags: article.tags?.join(', ') || '',
+    });
+  };
+
+  const handleSave = async () => {
+    if (!editForm.title.trim() || !editForm.content.trim()) return;
+
+    setIsSaving(true);
+    try {
+      const tags = editForm.tags
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
+
+      const updatedArticle = await updateArticle(articleId, {
+        title: editForm.title,
+        content: editForm.content,
+        tags,
+      });
+
+      setArticle(updatedArticle);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Erro ao salvar artigo:', error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -82,27 +137,93 @@ export default function ArticleViewPage() {
         />
       )}
 
-      <div className="flex justify-end">
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push(`/articles/${articleId}/edit`)}>
-            <MdEdit className="mr-2 h-5 w-5" />
-            Editar
-          </Button>
-          <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
-            <MdDelete className="mr-2 h-5 w-5" />
-            Excluir
-          </Button>
+      {isEditing ? (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-sm font-medium block">Título</label>
+            <Input
+              value={editForm.title}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, title: e.target.value }))}
+              placeholder="Título do artigo"
+              disabled={isSaving}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium block">Conteúdo</label>
+            <Textarea
+              value={editForm.content}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, content: e.target.value }))}
+              placeholder="Conteúdo do artigo..."
+              rows={20}
+              className="min-h-[500px] resize-none"
+              disabled={isSaving}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium block">Tags</label>
+            <Input
+              value={editForm.tags}
+              onChange={(e) => setEditForm((prev) => ({ ...prev, tags: e.target.value }))}
+              placeholder="Tags (separadas por vírgula)"
+              disabled={isSaving}
+            />
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={handleCancelEdit} disabled={isSaving}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isSaving || !editForm.title.trim() || !editForm.content.trim()}
+            >
+              {isSaving ? 'Salvando...' : 'Salvar'}
+            </Button>
+          </div>
         </div>
-      </div>
-
-      <ArticleViewer article={article} />
+      ) : (
+        <div className="relative group">
+          <div className="absolute top-4 right-4 z-10 flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleEdit}
+                    className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-accent"
+                  >
+                    <MdEdit className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Editar artigo</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground text-destructive"
+                  >
+                    <MdDelete className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Excluir artigo</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <ArticleViewer article={article} />
+        </div>
+      )}
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir este artigo? Esta ação não pode ser desfeita.
+              Você está prestes a excluir este artigo. Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

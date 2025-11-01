@@ -42,7 +42,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header - sempre visível no mobile */}
       <header className="border-b border-border/40 backdrop-blur-sm bg-background/95 sticky top-0 z-50 md:hidden">
         <div className="flex h-16 items-center justify-between px-4">
           <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -63,18 +62,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </header>
 
       <div className="flex h-screen">
-        {/* Sidebar */}
         <div
           className={`${isMobile ? 'fixed inset-y-0 left-0 z-40' : 'relative'} ${isMobile && !mobileMenuOpen ? 'hidden' : ''}`}
         >
           <Sidebar
             isCollapsed={sidebarCollapsed && !isMobile}
             isMobile={isMobile}
-            onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+            onToggleCollapse={
+              isMobile
+                ? () => setMobileMenuOpen(false)
+                : () => setSidebarCollapsed(!sidebarCollapsed)
+            }
           />
         </div>
 
-        {/* Overlay para mobile */}
         {isMobile && mobileMenuOpen && (
           <div
             className="fixed inset-0 bg-black/50 z-30"
@@ -82,7 +83,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           />
         )}
 
-        {/* Main content */}
         <main className="flex-1 overflow-auto">
           <div className="container mx-auto px-4 py-8">{children}</div>
         </main>

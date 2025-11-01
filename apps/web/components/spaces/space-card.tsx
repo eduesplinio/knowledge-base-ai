@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { IoMdBook } from 'react-icons/io';
 import { MdArrowForward, MdMoreVert, MdEdit, MdDelete } from 'react-icons/md';
+import { MdOutlineLibraryBooks } from 'react-icons/md';
 import { Card } from '@workspace/ui/components/card';
 import {
   DropdownMenu,
@@ -60,7 +60,7 @@ export function SpaceCard({
         <div className="pr-6">
           <div>
             <div className="flex items-center gap-1.5 mb-2">
-              <IoMdBook className="w-[22px] h-[22px] text-muted-foreground flex-shrink-0" />
+              <MdOutlineLibraryBooks className="w-[22px] h-[22px] text-muted-foreground flex-shrink-0" />
               <div className="text-base font-light flex-1 min-w-0 leading-tight break-words line-clamp-2">
                 {space.name}
               </div>

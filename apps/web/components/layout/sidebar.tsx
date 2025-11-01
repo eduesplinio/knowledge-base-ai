@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { IoMdBook } from 'react-icons/io';
 import {
   MdChevronLeft,
   MdChevronRight,
@@ -14,6 +13,7 @@ import {
   MdOutlineDashboard,
   MdFolderOpen,
   MdSearch,
+  MdOutlineLibraryBooks,
 } from 'react-icons/md';
 import { fetchSpaces } from '@/lib/api';
 import {
@@ -73,6 +73,11 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
     label: string;
     isActive: boolean;
   }) => {
+    const handleClick = () => {
+      if (isMobile && onToggleCollapse) {
+        onToggleCollapse();
+      }
+    };
     if (isCollapsed) {
       return (
         <TooltipProvider>
@@ -84,35 +89,37 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
                 asChild
                 className={`h-8 w-8 ${
                   active
-                    ? 'bg-primary text-primary-foreground !hover:bg-primary !hover:text-primary-foreground'
+                    ? 'bg-accent text-accent-foreground'
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 }`}
                 style={
                   active
                     ? {
-                        backgroundColor: 'hsl(var(--primary))',
-                        color: 'hsl(var(--primary-foreground))',
+                        backgroundColor: 'hsl(var(--accent))',
+                        color: 'hsl(var(--accent-foreground))',
                       }
                     : {}
                 }
                 onMouseEnter={
                   active
                     ? (e) => {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--primary))';
-                        e.currentTarget.style.color = 'hsl(var(--primary-foreground))';
+                        e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
+                        e.currentTarget.style.color = 'hsl(var(--accent-foreground))';
                       }
                     : undefined
                 }
                 onMouseLeave={
                   active
                     ? (e) => {
-                        e.currentTarget.style.backgroundColor = 'hsl(var(--primary))';
-                        e.currentTarget.style.color = 'hsl(var(--primary-foreground))';
+                        e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
+                        e.currentTarget.style.color = 'hsl(var(--accent-foreground))';
                       }
                     : undefined
                 }
               >
-                <Link href={href}>{icon}</Link>
+                <Link href={href} onClick={handleClick}>
+                  {icon}
+                </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right">{label}</TooltipContent>
@@ -124,9 +131,10 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
     return (
       <Link
         href={href}
+        onClick={handleClick}
         className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-colors ${
           active
-            ? 'bg-primary text-primary-foreground'
+            ? 'bg-accent text-accent-foreground'
             : 'text-muted-foreground hover:text-foreground hover:bg-accent'
         }`}
       >
@@ -138,31 +146,45 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
 
   return (
     <aside
-      className={`${isCollapsed ? 'w-14' : 'w-64'} bg-muted/30 h-screen transition-all duration-300 ${isMobile && isCollapsed ? 'hidden' : ''} flex flex-col`}
+      className={`${isCollapsed ? 'w-14' : 'w-64'} ${isMobile ? 'bg-background border-r' : 'bg-muted/30'} h-screen transition-all duration-300 ${isMobile && isCollapsed ? 'hidden' : ''} flex flex-col`}
     >
-      {/* Logo */}
       <div className="p-4 pb-6">
         {isCollapsed ? (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href="/" className="flex items-center justify-center">
-                  <MdMenuBook className="w-6 h-6 text-primary" />
+                <Link
+                  href="/"
+                  className="flex items-center justify-center"
+                  onClick={() => {
+                    if (isMobile && onToggleCollapse) {
+                      onToggleCollapse();
+                    }
+                  }}
+                >
+                  <MdMenuBook className="w-6 h-6 text-muted-foreground" />
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Base de Conhecimento</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         ) : (
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <MdMenuBook className="w-6 h-6 text-primary" />
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            onClick={() => {
+              if (isMobile && onToggleCollapse) {
+                onToggleCollapse();
+              }
+            }}
+          >
+            <MdMenuBook className="w-6 h-6 text-muted-foreground" />
             <span className="text-lg font-semibold whitespace-nowrap">Base de Conhecimento</span>
           </Link>
         )}
       </div>
 
       <div className="px-4 pb-4 space-y-4 flex-1">
-        {/* Pesquisa */}
         {isCollapsed ? (
           <div className="flex justify-center">
             <TooltipProvider>
@@ -192,7 +214,6 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
           </Button>
         )}
 
-        {/* Dashboard */}
         <div className={isCollapsed ? 'flex justify-center' : ''}>
           <SidebarLink
             href="/"
@@ -202,7 +223,6 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
           />
         </div>
 
-        {/* Espaços */}
         <div>
           {isCollapsed ? (
             <div className="flex justify-center">
@@ -215,30 +235,30 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
                       onClick={() => setSpacesExpanded(!spacesExpanded)}
                       className={`h-8 w-8 ${
                         spacesExpanded
-                          ? 'bg-primary text-primary-foreground'
+                          ? 'bg-accent text-accent-foreground'
                           : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                       }`}
                       style={
                         spacesExpanded
                           ? {
-                              backgroundColor: 'hsl(var(--primary))',
-                              color: 'hsl(var(--primary-foreground))',
+                              backgroundColor: 'hsl(var(--accent))',
+                              color: 'hsl(var(--accent-foreground))',
                             }
                           : {}
                       }
                       onMouseEnter={
                         spacesExpanded
                           ? (e) => {
-                              e.currentTarget.style.backgroundColor = 'hsl(var(--primary))';
-                              e.currentTarget.style.color = 'hsl(var(--primary-foreground))';
+                              e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
+                              e.currentTarget.style.color = 'hsl(var(--accent-foreground))';
                             }
                           : undefined
                       }
                       onMouseLeave={
                         spacesExpanded
                           ? (e) => {
-                              e.currentTarget.style.backgroundColor = 'hsl(var(--primary))';
-                              e.currentTarget.style.color = 'hsl(var(--primary-foreground))';
+                              e.currentTarget.style.backgroundColor = 'hsl(var(--accent))';
+                              e.currentTarget.style.color = 'hsl(var(--accent-foreground))';
                             }
                           : undefined
                       }
@@ -285,7 +305,7 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
                       >
                         <SidebarLink
                           href={`/spaces/${space._id}`}
-                          icon={<IoMdBook className="w-4 h-4 flex-shrink-0" />}
+                          icon={<MdOutlineLibraryBooks className="w-4 h-4 flex-shrink-0" />}
                           label={space.name}
                           isActive={isActive(`/spaces/${space._id}`)}
                         />
@@ -296,9 +316,7 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
         </div>
       </div>
 
-      {/* Botões inferiores */}
       <div className="p-4 space-y-2">
-        {/* Botão Sair */}
         {isCollapsed ? (
           <div className="flex justify-center">
             <TooltipProvider>
@@ -328,7 +346,6 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
           </Button>
         )}
 
-        {/* Botão de Colapso */}
         {!isMobile && onToggleCollapse && (
           <div className={`flex ${isCollapsed ? 'justify-center' : 'justify-end'}`}>
             <Button
@@ -347,7 +364,11 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
         )}
       </div>
 
-      <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
+      <SearchModal
+        open={searchModalOpen}
+        onOpenChange={setSearchModalOpen}
+        onSearch={isMobile && onToggleCollapse ? onToggleCollapse : undefined}
+      />
     </aside>
   );
 }

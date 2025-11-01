@@ -137,7 +137,6 @@ export function ArticleForm({
               />
             </div>
 
-            {/* Seção de Geração com IA */}
             <div className="space-y-2 border-t pt-4">
               <Label htmlFor="aiPrompt">Gerar conteúdo com IA</Label>
               <div className="flex gap-2">
@@ -179,7 +178,7 @@ export function ArticleForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="tags">Tags (separadas por vírgula)</Label>
+              <Label htmlFor="tags">Tags</Label>
               <Input
                 id="tags"
                 value={tagsInput}

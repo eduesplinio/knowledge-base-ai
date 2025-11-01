@@ -107,11 +107,9 @@ export default function DashboardPage() {
     setIsSaving(true);
     try {
       if (editingSpace) {
-        // Editar espaço existente
         const updatedSpace = await updateSpace(editingSpace._id, formData);
         setSpaces(spaces.map((s) => (s._id === editingSpace._id ? updatedSpace : s)));
       } else {
-        // Criar novo espaço
         const newSpace = await createSpace(formData);
         setSpaces([...spaces, newSpace]);
       }
@@ -161,7 +159,7 @@ export default function DashboardPage() {
         <div className="space-y-2">
           <h1 className="text-4xl font-normal tracking-tight">Base de Conhecimento</h1>
           <p className="text-muted-foreground text-lg">
-            Seu conhecimento organizado e acessível com IA.
+            Seu conhecimento organizado e acessível com IA
           </p>
         </div>
 
@@ -225,7 +223,7 @@ export default function DashboardPage() {
       <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="pb-4">
-            <DialogTitle>{editingSpace ? 'Editar Espaço' : 'Adicionar Espaço'}</DialogTitle>
+            <DialogTitle>{editingSpace ? 'Editar Espaço' : 'Novo Espaço'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">

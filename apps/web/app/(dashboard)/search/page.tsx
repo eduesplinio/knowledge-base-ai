@@ -77,8 +77,10 @@ function SearchContent() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Resultados da Busca</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Resultados da Busca</h1>
+      </div>
       <SearchResults results={results} query={query} />
     </div>
   );

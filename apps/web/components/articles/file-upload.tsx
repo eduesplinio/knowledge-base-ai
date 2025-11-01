@@ -19,9 +19,10 @@ import { Progress } from '@workspace/ui/components/progress';
 
 interface FileUploadProps {
   spaceId: string;
+  onArticleCreated?: (article: any) => void;
 }
 
-export function FileUpload({ spaceId }: FileUploadProps) {
+export function FileUpload({ spaceId, onArticleCreated }: FileUploadProps) {
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [tags, setTags] = useState('');
@@ -40,14 +41,14 @@ export function FileUpload({ spaceId }: FileUploadProps) {
     const fileExtension = selectedFile.name.substring(selectedFile.name.lastIndexOf('.'));
 
     if (!validExtensions.includes(fileExtension.toLowerCase())) {
-      setError('Apenas arquivos .md e .txt são permitidos');
+      setError('Formato não suportado. Use arquivos .md ou .txt');
       setFile(null);
       return;
     }
 
     const maxSize = 5 * 1024 * 1024;
     if (selectedFile.size > maxSize) {
-      setError('Arquivo muito grande. Tamanho máximo: 5MB');
+      setError('Documento muito grande. Limite de 5MB');
       setFile(null);
       return;
     }
@@ -58,7 +59,7 @@ export function FileUpload({ spaceId }: FileUploadProps) {
 
   const handleUpload = async () => {
     if (!file) {
-      setError('Selecione um arquivo');
+      setError('Escolha um documento para importar');
       return;
     }
 
@@ -98,16 +99,17 @@ export function FileUpload({ spaceId }: FileUploadProps) {
       setUploadProgress(100);
 
       if (!response.ok) {
-        throw new Error('Erro ao fazer upload do arquivo');
+        throw new Error('Não foi possível importar o documento');
       }
 
       const article = await response.json();
 
+      if (onArticleCreated) {
+        onArticleCreated(article);
+      }
       setOpen(false);
-      router.push(`/articles/${article._id}`);
-      router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao fazer upload do arquivo');
+      setError(err instanceof Error ? err.message : 'Falha na importação do documento');
       setUploadProgress(0);
     } finally {
       setIsUploading(false);
@@ -129,55 +131,67 @@ export function FileUpload({ spaceId }: FileUploadProps) {
       <DialogTrigger asChild>
         <Button variant="outline">
           <MdUploadFile className="mr-2 h-4 w-4" />
-          Upload de Arquivo
+          Importar Documentos
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Upload de Documento</DialogTitle>
-          <DialogDescription>
-            Faça upload de um arquivo .md ou .txt para criar um artigo
-          </DialogDescription>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader className="pb-4">
+          <DialogTitle>Importar Documentos</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {/* Seleção de arquivo */}
+        <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="file">Arquivo</Label>
-            <div className="flex items-center gap-2">
-              <Input
+            <label className="text-sm font-medium block">Documento</label>
+            <div className="space-y-2">
+              <input
                 id="file"
                 type="file"
                 accept=".md,.txt"
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 disabled={isUploading}
+                className="hidden"
               />
-              {file && (
+              <div className="flex items-center gap-2">
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    setFile(null);
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = '';
-                    }
-                  }}
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
+                  className="flex-1"
                 >
-                  <MdClose className="h-4 w-4" />
+                  <MdUploadFile className="mr-2 h-4 w-4" />
+                  {file ? 'Alterar arquivo' : 'Escolher arquivo'}
                 </Button>
-              )}
+                {file && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setFile(null);
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                      }
+                    }}
+                    disabled={isUploading}
+                  >
+                    <MdClose className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
             {file && (
               <p className="text-sm text-muted-foreground">
                 {file.name} ({(file.size / 1024).toFixed(2)} KB)
               </p>
             )}
+            <p className="text-xs text-muted-foreground">
+              Arquivos suportados: .md e .txt (máximo 5MB)
+            </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tags">Tags (opcional)</Label>
+            <label className="text-sm font-medium block">Tags (opcional)</label>
             <Input
               id="tags"
               placeholder="tag1, tag2, tag3"
@@ -192,7 +206,7 @@ export function FileUpload({ spaceId }: FileUploadProps) {
             <div className="space-y-2">
               <Progress value={uploadProgress} />
               <p className="text-sm text-center text-muted-foreground">
-                Fazendo upload... {uploadProgress}%
+                Processando... {uploadProgress}%
               </p>
             </div>
           )}
@@ -200,14 +214,14 @@ export function FileUpload({ spaceId }: FileUploadProps) {
           {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
 
-        <DialogFooter>
+        <div className="flex justify-end gap-3 pt-4">
           <Button variant="outline" onClick={handleClose} disabled={isUploading}>
             Cancelar
           </Button>
           <Button onClick={handleUpload} disabled={!file || isUploading}>
-            {isUploading ? 'Enviando...' : 'Upload'}
+            {isUploading ? 'Processando...' : 'Importar'}
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
