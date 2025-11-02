@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { MdEdit, MdDelete, MdAutoAwesome } from 'react-icons/md';
 import { Button } from '@workspace/ui/components/button';
@@ -33,8 +33,18 @@ export default function ArticleViewPage() {
   const router = useRouter();
   const articleId = params.id as string;
 
-  const [article, setArticle] = useState<any>(null);
-  const [space, setSpace] = useState<any>(null);
+  const [article, setArticle] = useState<{
+    _id: string;
+    title: string;
+    content: string;
+    spaceId: string;
+    tags: string[];
+    createdAt: string;
+  } | null>(null);
+  const [space, setSpace] = useState<{
+    _id: string;
+    name: string;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -45,11 +55,7 @@ export default function ArticleViewPage() {
   const [aiError, setAiError] = useState('');
   const { success, error: showError } = useToast();
 
-  useEffect(() => {
-    loadArticle();
-  }, [articleId]);
-
-  const loadArticle = async () => {
+  const loadArticle = useCallback(async () => {
     try {
       setIsLoading(true);
       const articleData = await fetchArticle(articleId);
@@ -70,13 +76,17 @@ export default function ArticleViewPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [articleId]);
+
+  useEffect(() => {
+    loadArticle();
+  }, [loadArticle]);
 
   const handleDelete = async () => {
     try {
       await deleteArticle(articleId);
       success('Artigo excluído com sucesso!');
-      setTimeout(() => router.push(`/spaces/${article.spaceId}`), 1500);
+      setTimeout(() => router.push(`/spaces/${article?.spaceId || ''}`), 1500);
     } catch (error) {
       console.error('Erro ao deletar artigo:', error);
       showError('Erro ao excluir artigo');
@@ -91,11 +101,13 @@ export default function ArticleViewPage() {
 
   const handleCancelEdit = () => {
     setIsEditing(false);
-    setEditForm({
-      title: article.title,
-      content: article.content,
-      tags: article.tags?.join(', ') || '',
-    });
+    if (article) {
+      setEditForm({
+        title: article.title,
+        content: article.content,
+        tags: article.tags?.join(', ') || '',
+      });
+    }
     setAiPrompt('');
     setAiError('');
   };

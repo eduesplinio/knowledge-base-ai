@@ -1,5 +1,17 @@
 import { AuthOptions } from 'next-auth';
 import GitHubProvider from 'next-auth/providers/github';
+import { JWT } from 'next-auth/jwt';
+import { Session, User } from 'next-auth';
+import { Account } from 'next-auth';
+
+interface ExtendedSession extends Session {
+  user: {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  };
+}
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -15,17 +27,18 @@ export const authOptions: AuthOptions = {
     signIn: '/login',
   },
   callbacks: {
-    async jwt({ token, user, account }: any) {
+    async jwt({ token, user }: { token: JWT; user?: User; account?: Account | null }) {
       if (user) {
         token.id = user.id;
       }
       return token;
     },
-    async session({ session, token }: any) {
-      if (session.user) {
-        session.user.id = token.id;
+    async session({ session, token }: { session: Session; token: JWT }) {
+      const extendedSession = session as ExtendedSession;
+      if (extendedSession.user) {
+        extendedSession.user.id = token.id as string;
       }
-      return session;
+      return extendedSession;
     },
   },
 };

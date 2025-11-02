@@ -37,7 +37,7 @@ export function SearchResults({ results, query }: SearchResultsProps) {
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
         {results.length} resultado{results.length !== 1 ? 's' : ''} encontrado
-        {results.length !== 1 ? 's' : ''} para "{query}"
+        {results.length !== 1 ? 's' : ''} para &quot;{query}&quot;
       </p>
 
       <div className="divide-y divide-border">

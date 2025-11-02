@@ -1,8 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { MdArrowForward, MdMoreVert, MdEdit, MdDelete } from 'react-icons/md';
 import { MdOutlineLibraryBooks } from 'react-icons/md';
 import { Card } from '@workspace/ui/components/card';
@@ -34,8 +32,6 @@ export function SpaceCard({
   isDropdownOpen = false,
   onDropdownChange,
 }: SpaceCardProps) {
-  const router = useRouter();
-
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();

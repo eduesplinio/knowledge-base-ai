@@ -1,22 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { ArticleForm } from '@/components/articles/article-form';
 import { fetchArticle, updateArticle } from '@/lib/api';
+
+interface Article {
+  _id: string;
+  title: string;
+  content: string;
+  spaceId: string;
+  tags: string[];
+}
 
 export default function EditArticlePage() {
   const params = useParams();
   const articleId = params.id as string;
 
-  const [article, setArticle] = useState<any>(null);
+  const [article, setArticle] = useState<Article | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadArticle();
-  }, [articleId]);
-
-  const loadArticle = async () => {
+  const loadArticle = useCallback(async () => {
     try {
       setIsLoading(true);
       const data = await fetchArticle(articleId);
@@ -26,7 +30,11 @@ export default function EditArticlePage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [articleId]);
+
+  useEffect(() => {
+    loadArticle();
+  }, [loadArticle]);
 
   const handleSubmit = async (data: {
     title: string;

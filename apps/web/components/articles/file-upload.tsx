@@ -1,15 +1,11 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -18,9 +14,16 @@ import { MdUploadFile, MdClose } from 'react-icons/md';
 import { Progress } from '@workspace/ui/components/progress';
 import { useToast } from '@workspace/ui/hooks/use-toast';
 
+interface Article {
+  _id: string;
+  title: string;
+  content: string;
+  tags: string[];
+}
+
 interface FileUploadProps {
   spaceId: string;
-  onArticleCreated?: (article: any) => void;
+  onArticleCreated?: (article: Article) => void;
 }
 
 export function FileUpload({ spaceId, onArticleCreated }: FileUploadProps) {
@@ -31,7 +34,6 @@ export function FileUpload({ spaceId, onArticleCreated }: FileUploadProps) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
   const { success, error: showError } = useToast();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

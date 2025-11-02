@@ -18,7 +18,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { MdAdd, MdMenuBook } from 'react-icons/md';
-import Link from 'next/link';
 import { SearchBar } from '@/components/search/search-bar';
 import { Loading } from '@/components/ui/loading';
 import { useToast } from '@workspace/ui/hooks/use-toast';

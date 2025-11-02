@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { MdArrowBack } from 'react-icons/md';
+import { useEffect, useState, useCallback } from 'react';
+import { useParams } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
-import Link from 'next/link';
 import { ArticleList } from '@/components/articles/article-list';
 import { fetchSpace, fetchArticles, deleteArticle, createArticle, updateArticle } from '@/lib/api';
 import { FileUpload } from '@/components/articles/file-upload';
@@ -41,7 +39,6 @@ interface Article {
 
 export default function SpaceDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const spaceId = params.id as string;
 
   const [space, setSpace] = useState<Space | null>(null);
@@ -57,11 +54,7 @@ export default function SpaceDetailPage() {
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const { success, error: showError } = useToast();
 
-  useEffect(() => {
-    loadData();
-  }, [spaceId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setIsLoading(true);
       const [spaceData, articlesData] = await Promise.all([
@@ -75,7 +68,11 @@ export default function SpaceDetailPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [spaceId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleDelete = async () => {
     if (!deleteId) return;

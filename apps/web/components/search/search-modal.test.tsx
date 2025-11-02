@@ -21,7 +21,7 @@ jest.mock('@workspace/ui/components/dialog', () => ({
 }));
 
 jest.mock('@workspace/ui/components/input', () => ({
-  Input: ({ placeholder, value, onChange, onSubmit, ...props }: never) => (
+  Input: ({ placeholder, value, onChange, ...props }: never) => (
     <input placeholder={placeholder} value={value} onChange={onChange} {...props} />
   ),
 }));

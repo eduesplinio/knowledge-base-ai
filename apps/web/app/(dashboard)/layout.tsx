@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { Button } from '@workspace/ui/components/button';
-import { MdLogout, MdMenuBook, MdMenu, MdChevronLeft, MdChevronRight } from 'react-icons/md';
+import { MdLogout, MdMenuBook, MdMenu } from 'react-icons/md';
 import { Sidebar } from '@/components/layout/sidebar';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
