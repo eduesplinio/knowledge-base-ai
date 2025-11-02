@@ -12,8 +12,8 @@ export class CreateArticleDto {
     example: 'Como usar React Hooks',
     description: 'Título do artigo',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Título deve ser uma string' })
+  @IsNotEmpty({ message: 'Título é obrigatório' })
   title!: string;
 
   @ApiProperty({
@@ -21,16 +21,16 @@ export class CreateArticleDto {
       'React Hooks são funções que permitem usar state e outros recursos do React sem escrever uma classe...',
     description: 'Conteúdo do artigo',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Conteúdo deve ser uma string' })
+  @IsNotEmpty({ message: 'Conteúdo é obrigatório' })
   content!: string;
 
   @ApiProperty({
     example: '507f1f77bcf86cd799439011',
     description: 'ID do espaço ao qual o artigo pertence',
   })
-  @IsMongoId()
-  @IsNotEmpty()
+  @IsMongoId({ message: 'spaceId deve ser um ID MongoDB válido' })
+  @IsNotEmpty({ message: 'spaceId é obrigatório' })
   spaceId!: string;
 
   @ApiProperty({
@@ -39,8 +39,8 @@ export class CreateArticleDto {
     required: false,
     type: [String],
   })
-  @IsArray()
-  @IsString({ each: true })
+  @IsArray({ message: 'Tags deve ser um array' })
+  @IsString({ each: true, message: 'Cada tag deve ser uma string' })
   @IsOptional()
   tags?: string[];
 }

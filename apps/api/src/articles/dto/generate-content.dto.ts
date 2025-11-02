@@ -14,9 +14,9 @@ export class GenerateContentDto {
     example: 'Escreva um artigo sobre TypeScript',
     description: 'Prompt para gerar o conteúdo',
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(1000)
+  @IsString({ message: 'Prompt deve ser uma string' })
+  @IsNotEmpty({ message: 'Prompt é obrigatório' })
+  @MaxLength(1000, { message: 'Prompt deve ter no máximo 1000 caracteres' })
   prompt!: string;
 
   @ApiProperty({
@@ -25,9 +25,9 @@ export class GenerateContentDto {
     required: false,
   })
   @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Max(2)
+  @IsNumber({}, { message: 'Temperatura deve ser um número' })
+  @Min(0, { message: 'Temperatura deve ser no mínimo 0' })
+  @Max(2, { message: 'Temperatura deve ser no máximo 2' })
   temperature?: number;
 
   @ApiProperty({
@@ -36,8 +36,8 @@ export class GenerateContentDto {
     required: false,
   })
   @IsOptional()
-  @IsNumber()
-  @Min(100)
-  @Max(4000)
+  @IsNumber({}, { message: 'maxTokens deve ser um número' })
+  @Min(100, { message: 'maxTokens deve ser no mínimo 100' })
+  @Max(4000, { message: 'maxTokens deve ser no máximo 4000' })
   maxTokens?: number;
 }

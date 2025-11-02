@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SpacesService } from './spaces.service';
 import { CreateSpaceDto } from './dto/create-space.dto';
@@ -35,7 +36,7 @@ export class SpacesController {
   @ApiOperation({ summary: 'Buscar espaço por ID' })
   @ApiResponse({ status: 200, description: 'Espaço encontrado' })
   @ApiResponse({ status: 404, description: 'Espaço não encontrado' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseObjectIdPipe) id: string) {
     return this.spacesService.findOne(id);
   }
 
@@ -43,7 +44,10 @@ export class SpacesController {
   @ApiOperation({ summary: 'Atualizar espaço' })
   @ApiResponse({ status: 200, description: 'Espaço atualizado com sucesso' })
   @ApiResponse({ status: 404, description: 'Espaço não encontrado' })
-  update(@Param('id') id: string, @Body() updateSpaceDto: UpdateSpaceDto) {
+  update(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() updateSpaceDto: UpdateSpaceDto,
+  ) {
     return this.spacesService.update(id, updateSpaceDto);
   }
 
@@ -51,7 +55,7 @@ export class SpacesController {
   @ApiOperation({ summary: 'Deletar espaço' })
   @ApiResponse({ status: 200, description: 'Espaço deletado com sucesso' })
   @ApiResponse({ status: 404, description: 'Espaço não encontrado' })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseObjectIdPipe) id: string) {
     return this.spacesService.remove(id);
   }
 }

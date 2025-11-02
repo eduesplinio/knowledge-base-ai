@@ -6,8 +6,8 @@ export class CreateSpaceDto {
     example: 'Documentação Frontend',
     description: 'Nome do espaço',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Nome deve ser uma string' })
+  @IsNotEmpty({ message: 'Nome é obrigatório' })
   name!: string;
 
   @ApiProperty({
@@ -15,7 +15,7 @@ export class CreateSpaceDto {
     description: 'Descrição do espaço',
     required: false,
   })
-  @IsString()
+  @IsString({ message: 'Descrição deve ser uma string' })
   @IsOptional()
   description?: string;
 }

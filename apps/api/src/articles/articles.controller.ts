@@ -11,6 +11,7 @@ import {
   UploadedFile,
   BadRequestException,
 } from '@nestjs/common';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import {
   ApiOperation,
   ApiQuery,
@@ -48,6 +49,9 @@ export class ArticlesController {
   })
   @ApiResponse({ status: 200, description: 'Lista de artigos' })
   findAll(@Query('spaceId') spaceId?: string) {
+    if (spaceId && !spaceId.match(/^[0-9a-fA-F]{24}$/)) {
+      throw new BadRequestException('spaceId deve ser um ID MongoDB válido');
+    }
     return this.articlesService.findAll(spaceId);
   }
 
@@ -61,7 +65,20 @@ export class ArticlesController {
   })
   @ApiResponse({ status: 200, description: 'Resultados da busca' })
   async search(@Query('q') query: string, @Query('limit') limit?: string) {
-    const limitNumber = limit ? parseInt(limit, 10) : undefined;
+    if (!query || query.trim() === '') {
+      throw new BadRequestException('Parâmetro de busca é obrigatório');
+    }
+
+    let limitNumber: number | undefined;
+    if (limit) {
+      limitNumber = parseInt(limit, 10);
+      if (isNaN(limitNumber) || limitNumber < 1 || limitNumber > 100) {
+        throw new BadRequestException(
+          'Limite deve ser um número entre 1 e 100',
+        );
+      }
+    }
+
     return this.articlesService.searchArticles(query, limitNumber);
   }
 
@@ -69,7 +86,7 @@ export class ArticlesController {
   @ApiOperation({ summary: 'Buscar artigo por ID' })
   @ApiResponse({ status: 200, description: 'Artigo encontrado' })
   @ApiResponse({ status: 404, description: 'Artigo não encontrado' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseObjectIdPipe) id: string) {
     return this.articlesService.findOne(id);
   }
 
@@ -77,7 +94,10 @@ export class ArticlesController {
   @ApiOperation({ summary: 'Atualizar artigo' })
   @ApiResponse({ status: 200, description: 'Artigo atualizado com sucesso' })
   @ApiResponse({ status: 404, description: 'Artigo não encontrado' })
-  update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
+  update(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() updateArticleDto: UpdateArticleDto,
+  ) {
     return this.articlesService.update(id, updateArticleDto);
   }
 
@@ -85,7 +105,7 @@ export class ArticlesController {
   @ApiOperation({ summary: 'Deletar artigo' })
   @ApiResponse({ status: 200, description: 'Artigo deletado com sucesso' })
   @ApiResponse({ status: 404, description: 'Artigo não encontrado' })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseObjectIdPipe) id: string) {
     return this.articlesService.remove(id);
   }
 
