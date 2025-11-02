@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { MdEdit, MdDelete } from 'react-icons/md';
+import { MdEdit, MdDelete, MdAutoAwesome } from 'react-icons/md';
 import { Button } from '@workspace/ui/components/button';
 import { ArticleViewer } from '@/components/articles/article-viewer';
 import { fetchArticle, deleteArticle, fetchSpace, updateArticle } from '@/lib/api';
@@ -40,6 +40,9 @@ export default function ArticleViewPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', content: '', tags: '' });
   const [isSaving, setIsSaving] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiError, setAiError] = useState('');
   const { success, error: showError } = useToast();
 
   useEffect(() => {
@@ -82,6 +85,8 @@ export default function ArticleViewPage() {
 
   const handleEdit = () => {
     setIsEditing(true);
+    setAiPrompt('');
+    setAiError('');
   };
 
   const handleCancelEdit = () => {
@@ -91,6 +96,8 @@ export default function ArticleViewPage() {
       content: article.content,
       tags: article.tags?.join(', ') || '',
     });
+    setAiPrompt('');
+    setAiError('');
   };
 
   const handleSave = async () => {
@@ -117,6 +124,46 @@ export default function ArticleViewPage() {
       showError('Erro ao salvar artigo');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleGenerateWithAI = async () => {
+    if (!aiPrompt.trim()) {
+      setAiError('Digite um prompt para gerar conteúdo');
+      return;
+    }
+
+    setAiError('');
+    setIsGenerating(true);
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/articles/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: aiPrompt,
+          temperature: 0.7,
+          maxTokens: 2000,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao gerar conteúdo');
+      }
+
+      const data = await response.json();
+      setEditForm((prev) => ({ ...prev, content: data.content }));
+      setAiPrompt('');
+      success('Conteúdo gerado com sucesso!');
+    } catch (err) {
+      setAiError('Não foi possível gerar o conteúdo. Tente novamente.');
+      showError('Erro ao gerar conteúdo com IA');
+      console.error(err);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -150,6 +197,35 @@ export default function ArticleViewPage() {
               placeholder="Título do artigo"
               disabled={isSaving}
             />
+          </div>
+          <div className="space-y-2 border-t pt-4">
+            <label className="text-sm font-medium block">Gerar conteúdo com IA</label>
+            <div className="flex gap-2">
+              <Input
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="Ex: Escreva um artigo sobre TypeScript"
+                disabled={isGenerating || isSaving}
+              />
+              <Button
+                type="button"
+                onClick={handleGenerateWithAI}
+                disabled={isGenerating || isSaving || !aiPrompt.trim()}
+                variant="secondary"
+                className="flex items-center gap-2 flex-shrink-0"
+              >
+                {isGenerating ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600 dark:border-gray-600 dark:border-t-gray-300" />
+                ) : (
+                  <MdAutoAwesome className="h-4 w-4" />
+                )}
+                {isGenerating ? 'Gerando...' : 'Gerar'}
+              </Button>
+            </div>
+            {aiError && <p className="text-sm text-destructive">{aiError}</p>}
+            <p className="text-xs text-muted-foreground">
+              O conteúdo gerado será inserido no campo abaixo
+            </p>
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium block">Conteúdo</label>
