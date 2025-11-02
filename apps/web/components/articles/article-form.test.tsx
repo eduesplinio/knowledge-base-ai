@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ArticleForm } from './article-form';
 
@@ -20,7 +20,7 @@ jest.mock('@workspace/ui/hooks/use-toast', () => ({
 }));
 
 jest.mock('@workspace/ui/components/button', () => ({
-  Button: ({ children, onClick, type, disabled }: any) => (
+  Button: ({ children, onClick, type, disabled }: never) => (
     <button onClick={onClick} type={type} disabled={disabled}>
       {children}
     </button>
@@ -28,7 +28,7 @@ jest.mock('@workspace/ui/components/button', () => ({
 }));
 
 jest.mock('@workspace/ui/components/input', () => ({
-  Input: ({ placeholder, value, onChange, id, disabled }: any) => (
+  Input: ({ placeholder, value, onChange, id, disabled }: never) => (
     <input
       placeholder={placeholder}
       value={value}
@@ -40,7 +40,7 @@ jest.mock('@workspace/ui/components/input', () => ({
 }));
 
 jest.mock('@workspace/ui/components/textarea', () => ({
-  Textarea: ({ placeholder, value, onChange, id, disabled }: any) => (
+  Textarea: ({ placeholder, value, onChange, id, disabled }: never) => (
     <textarea
       placeholder={placeholder}
       value={value}
@@ -52,14 +52,14 @@ jest.mock('@workspace/ui/components/textarea', () => ({
 }));
 
 jest.mock('@workspace/ui/components/label', () => ({
-  Label: ({ children, htmlFor }: any) => <label htmlFor={htmlFor}>{children}</label>,
+  Label: ({ children, htmlFor }: never) => <label htmlFor={htmlFor}>{children}</label>,
 }));
 
 jest.mock('@workspace/ui/components/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h2>{children}</h2>,
+  Card: ({ children }: never) => <div>{children}</div>,
+  CardContent: ({ children }: never) => <div>{children}</div>,
+  CardHeader: ({ children }: never) => <div>{children}</div>,
+  CardTitle: ({ children }: never) => <h2>{children}</h2>,
 }));
 
 describe('ArticleForm', () => {

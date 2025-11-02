@@ -33,7 +33,7 @@ describe('AiService', () => {
         .spyOn(service['openai'].embeddings, 'create')
         .mockResolvedValue({
           data: [{ embedding: fakeEmbedding }],
-        } as any);
+        } as never);
 
       const result = await service.generateEmbedding('texto de teste');
 
@@ -63,7 +63,7 @@ describe('AiService', () => {
       };
       const mockChat = jest
         .spyOn(service['openai'].chat.completions, 'create')
-        .mockResolvedValue(fakeResponse as any);
+        .mockResolvedValue(fakeResponse as never);
 
       const result = await service.generateContent({
         prompt: 'test prompt',

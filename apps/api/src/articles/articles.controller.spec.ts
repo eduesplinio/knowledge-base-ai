@@ -6,7 +6,6 @@ import { AiService } from '../ai/ai.service';
 describe('ArticlesController', () => {
   let controller: ArticlesController;
   let articlesService: ArticlesService;
-  let aiService: AiService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,7 +30,6 @@ describe('ArticlesController', () => {
 
     controller = module.get<ArticlesController>(ArticlesController);
     articlesService = module.get<ArticlesService>(ArticlesService);
-    aiService = module.get<AiService>(AiService);
   });
 
   describe('POST /articles', () => {
@@ -48,9 +46,11 @@ describe('ArticlesController', () => {
         updatedAt: new Date(),
         save: jest.fn(),
         toObject: jest.fn(),
-      } as any;
+      } as never;
 
-      jest.spyOn(articlesService, 'create').mockResolvedValue(mockArticle);
+      const mockCreate = jest
+        .spyOn(articlesService, 'create')
+        .mockResolvedValue(mockArticle);
 
       const dto = {
         title: 'Meu Artigo',
@@ -61,7 +61,7 @@ describe('ArticlesController', () => {
       const result = await controller.create(dto);
 
       expect(result).toEqual(mockArticle);
-      expect(articlesService.create).toHaveBeenCalledWith(dto, 'temp-user-id');
+      expect(mockCreate).toHaveBeenCalledWith(dto, 'temp-user-id');
     });
   });
 
@@ -72,7 +72,7 @@ describe('ArticlesController', () => {
         tokensUsed: 150,
       };
 
-      jest
+      const mockGenerate = jest
         .spyOn(articlesService, 'generateContent')
         .mockResolvedValue(mockResponse);
 
@@ -84,7 +84,7 @@ describe('ArticlesController', () => {
       const result = await controller.generateContent(dto);
 
       expect(result).toEqual(mockResponse);
-      expect(articlesService.generateContent).toHaveBeenCalledWith(dto);
+      expect(mockGenerate).toHaveBeenCalledWith(dto);
     });
   });
 
@@ -99,17 +99,14 @@ describe('ArticlesController', () => {
         },
       ];
 
-      jest
+      const mockSearch = jest
         .spyOn(articlesService, 'searchArticles')
         .mockResolvedValue(mockSearchResults);
 
       const result = await controller.search('JavaScript', '10');
 
       expect(result).toEqual(mockSearchResults);
-      expect(articlesService.searchArticles).toHaveBeenCalledWith(
-        'JavaScript',
-        10,
-      );
+      expect(mockSearch).toHaveBeenCalledWith('JavaScript', 10);
     });
   });
 });
