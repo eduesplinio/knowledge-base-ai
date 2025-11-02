@@ -7,6 +7,7 @@ import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { useToast } from '@workspace/ui/hooks/use-toast';
 
 interface SpaceFormProps {
   title: string;
@@ -28,7 +29,7 @@ export function SpaceForm({
   const [description, setDescription] = useState(initialData?.description || '');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const { success, error: showError } = useToast();
   const router = useRouter();
 
   useEffect(() => {
@@ -45,9 +46,11 @@ export function SpaceForm({
 
     try {
       await onSubmit({ name, description });
-      router.push('/');
+      success('Espaço salvo com sucesso!');
+      setTimeout(() => router.push('/'), 1500);
     } catch (err) {
       setError('Erro ao salvar espaço');
+      showError('Erro ao salvar espaço');
       console.error(err);
     } finally {
       setIsLoading(false);

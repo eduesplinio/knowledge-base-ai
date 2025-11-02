@@ -101,7 +101,7 @@ export function ArticleCard({ article, onDelete, onEdit }: ArticleCardProps) {
                   <MdEdit className="mr-2 h-4 w-4" />
                   Editar
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                <DropdownMenuItem onClick={handleDelete}>
                   <MdDelete className="mr-2 h-4 w-4" />
                   Excluir
                 </DropdownMenuItem>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { Input } from '@workspace/ui/components/input';
@@ -16,12 +16,24 @@ export function SearchModal({ open, onOpenChange, onSearch }: SearchModalProps) 
   const [query, setQuery] = useState('');
   const router = useRouter();
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        onOpenChange(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onOpenChange]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query)}`);
       onOpenChange(false);
       onSearch?.();
-      router.push(`/search?q=${encodeURIComponent(query)}`);
       setQuery('');
     }
   };

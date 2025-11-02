@@ -8,6 +8,7 @@ import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { useToast } from '@workspace/ui/hooks/use-toast';
 
 interface ArticleFormProps {
   title: string;
@@ -43,6 +44,7 @@ export function ArticleForm({
   const [aiError, setAiError] = useState('');
 
   const router = useRouter();
+  const { success, error: showError } = useToast();
 
   useEffect(() => {
     if (initialData) {
@@ -82,8 +84,10 @@ export function ArticleForm({
       const data = await response.json();
       setContent(data.content);
       setAiPrompt('');
+      success('Conteúdo gerado com sucesso!');
     } catch (err) {
       setAiError('Não foi possível gerar o conteúdo. Tente novamente.');
+      showError('Erro ao gerar conteúdo com IA');
       console.error(err);
     } finally {
       setIsGenerating(false);
@@ -108,9 +112,11 @@ export function ArticleForm({
         tags,
       });
 
-      router.push(`/spaces/${spaceId}`);
+      success('Artigo salvo com sucesso!');
+      setTimeout(() => router.push(`/spaces/${spaceId}`), 1500);
     } catch (err) {
       setError('Erro ao salvar artigo');
+      showError('Erro ao salvar artigo');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -154,7 +160,11 @@ export function ArticleForm({
                   variant="secondary"
                   className="flex items-center gap-2"
                 >
-                  <MdAutoAwesome className="h-4 w-4" />
+                  {isGenerating ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600 dark:border-gray-600 dark:border-t-gray-300" />
+                  ) : (
+                    <MdAutoAwesome className="h-4 w-4" />
+                  )}
                   {isGenerating ? 'Gerando...' : 'Gerar'}
                 </Button>
               </div>

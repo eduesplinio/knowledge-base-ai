@@ -16,6 +16,7 @@ import {
 } from '@workspace/ui/components/dialog';
 import { MdUploadFile, MdClose } from 'react-icons/md';
 import { Progress } from '@workspace/ui/components/progress';
+import { useToast } from '@workspace/ui/hooks/use-toast';
 
 interface FileUploadProps {
   spaceId: string;
@@ -31,6 +32,7 @@ export function FileUpload({ spaceId, onArticleCreated }: FileUploadProps) {
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { success, error: showError } = useToast();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -42,6 +44,7 @@ export function FileUpload({ spaceId, onArticleCreated }: FileUploadProps) {
 
     if (!validExtensions.includes(fileExtension.toLowerCase())) {
       setError('Formato não suportado. Use arquivos .md ou .txt');
+      showError('Formato não suportado. Use arquivos .md ou .txt');
       setFile(null);
       return;
     }
@@ -49,6 +52,7 @@ export function FileUpload({ spaceId, onArticleCreated }: FileUploadProps) {
     const maxSize = 5 * 1024 * 1024;
     if (selectedFile.size > maxSize) {
       setError('Documento muito grande. Limite de 5MB');
+      showError('Documento muito grande. Limite de 5MB');
       setFile(null);
       return;
     }
@@ -60,6 +64,7 @@ export function FileUpload({ spaceId, onArticleCreated }: FileUploadProps) {
   const handleUpload = async () => {
     if (!file) {
       setError('Escolha um documento para importar');
+      showError('Escolha um documento para importar');
       return;
     }
 
@@ -107,9 +112,12 @@ export function FileUpload({ spaceId, onArticleCreated }: FileUploadProps) {
       if (onArticleCreated) {
         onArticleCreated(article);
       }
+      success('Documento importado com sucesso!');
       setOpen(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Falha na importação do documento');
+      const errorMessage = err instanceof Error ? err.message : 'Falha na importação do documento';
+      setError(errorMessage);
+      showError(errorMessage);
       setUploadProgress(0);
     } finally {
       setIsUploading(false);

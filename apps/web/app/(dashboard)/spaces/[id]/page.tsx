@@ -23,6 +23,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { MdAutoAwesome } from 'react-icons/md';
+import { Loading } from '@/components/ui/loading';
+import { useToast } from '@workspace/ui/hooks/use-toast';
 
 interface Space {
   _id: string;
@@ -53,6 +55,7 @@ export default function SpaceDetailPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiError, setAiError] = useState('');
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
+  const { success, error: showError } = useToast();
 
   useEffect(() => {
     loadData();
@@ -80,9 +83,11 @@ export default function SpaceDetailPage() {
     try {
       await deleteArticle(deleteId);
       setArticles(articles.filter((article) => article._id !== deleteId));
+      success('Artigo excluído com sucesso!');
       setDeleteId(null);
     } catch (error) {
       console.error('Erro ao deletar artigo:', error);
+      showError('Erro ao excluir artigo');
     }
   };
 
@@ -147,8 +152,10 @@ export default function SpaceDetailPage() {
       const data = await response.json();
       setArticleForm((prev) => ({ ...prev, content: data.content }));
       setAiPrompt('');
+      success('Conteúdo gerado com sucesso!');
     } catch (err) {
       setAiError('Não foi possível gerar o conteúdo. Tente novamente.');
+      showError('Erro ao gerar conteúdo com IA');
       console.error(err);
     } finally {
       setIsGenerating(false);
@@ -172,6 +179,7 @@ export default function SpaceDetailPage() {
           tags,
         });
         setArticles(articles.map((a) => (a._id === editingArticle._id ? updatedArticle : a)));
+        success('Artigo atualizado com sucesso!');
       } else {
         const newArticle = await createArticle({
           title: articleForm.title,
@@ -180,22 +188,20 @@ export default function SpaceDetailPage() {
           tags,
         });
         setArticles([...articles, newArticle]);
+        success('Artigo criado com sucesso!');
       }
 
       handleArticleModalClose();
     } catch (err) {
       console.error('Erro ao salvar artigo:', err);
+      showError('Erro ao salvar artigo');
     } finally {
       setIsSavingArticle(false);
     }
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-muted-foreground">Carregando...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!space) {
@@ -275,7 +281,11 @@ export default function SpaceDetailPage() {
                   variant="secondary"
                   className="flex items-center gap-2 flex-shrink-0"
                 >
-                  <MdAutoAwesome className="h-4 w-4" />
+                  {isGenerating ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600 dark:border-gray-600 dark:border-t-gray-300" />
+                  ) : (
+                    <MdAutoAwesome className="h-4 w-4" />
+                  )}
                   {isGenerating ? 'Gerando...' : 'Gerar'}
                 </Button>
               </div>

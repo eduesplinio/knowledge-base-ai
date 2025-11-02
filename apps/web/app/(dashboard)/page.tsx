@@ -20,6 +20,8 @@ import { Textarea } from '@workspace/ui/components/textarea';
 import { MdAdd, MdMenuBook } from 'react-icons/md';
 import Link from 'next/link';
 import { SearchBar } from '@/components/search/search-bar';
+import { Loading } from '@/components/ui/loading';
+import { useToast } from '@workspace/ui/hooks/use-toast';
 
 interface Space {
   _id: string;
@@ -38,6 +40,7 @@ export default function DashboardPage() {
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [isSaving, setIsSaving] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const { success, error: showError } = useToast();
 
   useEffect(() => {
     async function loadSpaces() {
@@ -67,10 +70,11 @@ export default function DashboardPage() {
     try {
       await deleteSpace(spaceToDelete._id);
       setSpaces(spaces.filter((s) => s._id !== spaceToDelete._id));
+      success('Espaço excluído com sucesso!');
       setSpaceToDelete(null);
     } catch (err) {
       console.error('Erro ao deletar espaço:', err);
-      alert('Erro ao deletar espaço');
+      showError('Erro ao excluir espaço');
     } finally {
       setIsDeleting(false);
     }
@@ -109,14 +113,16 @@ export default function DashboardPage() {
       if (editingSpace) {
         const updatedSpace = await updateSpace(editingSpace._id, formData);
         setSpaces(spaces.map((s) => (s._id === editingSpace._id ? updatedSpace : s)));
+        success('Espaço atualizado com sucesso!');
       } else {
         const newSpace = await createSpace(formData);
         setSpaces([...spaces, newSpace]);
+        success('Espaço criado com sucesso!');
       }
       handleModalClose();
     } catch (err) {
       console.error('Erro ao salvar espaço:', err);
-      alert('Erro ao salvar espaço');
+      showError('Erro ao salvar espaço');
     } finally {
       setIsSaving(false);
     }
@@ -128,14 +134,7 @@ export default function DashboardPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Carregando espaços...</p>
-        </div>
-      </div>
-    );
+    return <Loading message="Carregando..." />;
   }
 
   if (error) {
@@ -153,7 +152,7 @@ export default function DashboardPage() {
     <div className="min-h-[80vh]">
       <div className="text-center space-y-6 py-12 max-w-3xl mx-auto">
         <div className="flex justify-center">
-          <MdMenuBook className="w-16 h-16 text-muted-foreground" />
+          <MdMenuBook className="w-16 h-16 text-foreground/70" />
         </div>
 
         <div className="space-y-2">
@@ -164,7 +163,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="max-w-lg mx-auto">
-          <SearchBar />
+          <SearchBar onOpenSearch={() => setOpenDropdownId('search')} />
         </div>
       </div>
 

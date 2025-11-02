@@ -162,7 +162,7 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
                     }
                   }}
                 >
-                  <MdMenuBook className="w-6 h-6 text-muted-foreground" />
+                  <MdMenuBook className="w-6 h-6 text-foreground" />
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Base de Conhecimento</TooltipContent>
@@ -178,8 +178,10 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
               }
             }}
           >
-            <MdMenuBook className="w-6 h-6 text-muted-foreground" />
-            <span className="text-lg font-semibold whitespace-nowrap">Base de Conhecimento</span>
+            <MdMenuBook className="w-6 h-6 text-foreground" />
+            <span className="text-lg font-semibold whitespace-nowrap text-foreground">
+              Base de Conhecimento
+            </span>
           </Link>
         )}
       </div>
@@ -207,10 +209,15 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
           <Button
             variant="ghost"
             onClick={() => setSearchModalOpen(true)}
-            className="w-full justify-start text-muted-foreground hover:text-foreground"
+            className="w-full justify-between text-muted-foreground hover:text-foreground"
           >
-            <MdSearch className="mr-2 h-4 w-4" />
-            Pesquisar
+            <div className="flex items-center gap-2">
+              <MdSearch className="h-4 w-4" />
+              Pesquisar
+            </div>
+            <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+              <span className="text-xs">⌘</span>K
+            </kbd>
           </Button>
         )}
 

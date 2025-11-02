@@ -25,6 +25,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@workspace/ui/components/tooltip';
+import { Loading } from '@/components/ui/loading';
+import { useToast } from '@workspace/ui/hooks/use-toast';
 
 export default function ArticleViewPage() {
   const params = useParams();
@@ -38,6 +40,7 @@ export default function ArticleViewPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', content: '', tags: '' });
   const [isSaving, setIsSaving] = useState(false);
+  const { success, error: showError } = useToast();
 
   useEffect(() => {
     loadArticle();
@@ -69,9 +72,11 @@ export default function ArticleViewPage() {
   const handleDelete = async () => {
     try {
       await deleteArticle(articleId);
-      router.push(`/spaces/${article.spaceId}`);
+      success('Artigo excluído com sucesso!');
+      setTimeout(() => router.push(`/spaces/${article.spaceId}`), 1500);
     } catch (error) {
       console.error('Erro ao deletar artigo:', error);
+      showError('Erro ao excluir artigo');
     }
   };
 
@@ -106,19 +111,17 @@ export default function ArticleViewPage() {
 
       setArticle(updatedArticle);
       setIsEditing(false);
+      success('Artigo atualizado com sucesso!');
     } catch (error) {
       console.error('Erro ao salvar artigo:', error);
+      showError('Erro ao salvar artigo');
     } finally {
       setIsSaving(false);
     }
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-muted-foreground">Carregando...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!article) {
@@ -205,7 +208,7 @@ export default function ArticleViewPage() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setShowDeleteDialog(true)}
-                    className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground text-destructive"
+                    className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-accent"
                   >
                     <MdDelete className="h-4 w-4" />
                   </Button>
