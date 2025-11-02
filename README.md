@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🧠 Knowledge Base AI</h1>
+  <h1>🧠 <a href="https://knowledge-base-ai-eosin.vercel.app/" target="_blank">Knowledge Base AI</a></h1>
   <p><strong>Base de Conhecimento interna potencializada por IA</strong></p>
   
   <p>
@@ -23,20 +23,61 @@
 
 ## 📋 Sobre o Projeto
 
-O **Knowledge Base AI** é uma plataforma moderna para gerenciamento de conhecimento interno, potencializada por Inteligência Artificial. Permite criar, organizar e pesquisar artigos de forma inteligente, com geração automática de conteúdo via OpenAI e busca semântica avançada.
+O **[Knowledge Base AI](https://knowledge-base-ai-eosin.vercel.app/)** é uma plataforma moderna para gerenciamento de conhecimento interno, potencializada por Inteligência Artificial. Permite criar, organizar e pesquisar artigos de forma inteligente, com geração automática de conteúdo via OpenAI e busca semântica avançada.
+
+### 🎯 Objetivo
+
+Este projeto foi desenvolvido como parte de um desafio técnico para demonstrar habilidades em:
+
+- Desenvolvimento full-stack com TypeScript
+- Integração com APIs de IA (OpenAI)
+- Implementação de busca vetorial semântica
+- Arquitetura de monorepo escalável
 
 ## ✨ Features Implementadas
 
-- [x] 🔐 **Autenticação GitHub OAuth** - Login seguro via GitHub
-- [x] 📝 **Criação de Artigos** - Editor completo com suporte a Markdown
-- [x] 🤖 **Geração de Conteúdo IA** - Criação automática via OpenAI GPT
-- [x] 🔍 **Busca Semântica** - Pesquisa inteligente com embeddings
-- [x] 📁 **Organização por Spaces** - Categorização de artigos
-- [x] 🏷️ **Sistema de Tags** - Classificação e filtragem
-- [x] 📱 **Interface Responsiva** - Design moderno com Tailwind CSS
-- [x] 🧪 **Testes Automatizados** - Cobertura completa com Jest
-- [x] 🚀 **CI/CD Pipeline** - Integração contínua com GitHub Actions
-- [x] 📊 **Monitoramento** - Logs estruturados e métricas
+### 🔐 Autenticação e Segurança
+
+- [x] Login via GitHub OAuth (NextAuth.js)
+- [x] Sessões JWT seguras
+- [x] Proteção de rotas no frontend e backend
+- [x] CORS configurado para produção
+
+### � Gerenciamfento de Conteúdo
+
+- [x] CRUD completo de Spaces (categorias)
+- [x] CRUD completo de Articles (artigos)
+- [x] Editor Markdown com preview em tempo real
+- [x] Upload de arquivos (.md, .txt)
+- [x] Sistema de tags para classificação
+- [x] Organização hierárquica (Spaces → Articles)
+
+### 🤖 Inteligência Artificial
+
+- [x] Geração automática de conteúdo via GPT-4
+- [x] Geração automática de embeddings (text-embedding-3-small)
+- [x] Busca semântica vetorial com MongoDB Atlas
+- [x] Sugestões inteligentes baseadas em contexto
+
+### 🎨 Interface e UX
+
+- [x] Design responsivo (mobile, tablet, desktop)
+- [x] Componentes reutilizáveis com shadcn/ui
+- [x] Loading states e feedback visual
+- [x] Toasts para notificações
+- [x] Estados vazios amigáveis
+- [x] Navegação com sidebar e breadcrumbs
+- [x] Ícones contextuais (react-icons)
+
+### 🧪 Qualidade e DevOps
+
+- [x] TypeScript strict mode
+- [x] ESLint + Prettier configurados
+- [x] Husky + Commitlint (commits semânticos)
+- [x] Testes unitários e de integração (Jest)
+- [x] CI/CD com GitHub Actions
+- [x] Deploy automatizado (Vercel + Railway)
+- [x] Monorepo com Turbo
 
 ## 🏗️ Arquitetura do Projeto
 
@@ -50,12 +91,12 @@ kb-ia/
 │   │   │   ├── articles/    # Módulo de artigos
 │   │   │   ├── spaces/      # Módulo de spaces
 │   │   │   ├── ai/          # Serviços de IA
-│   │   │   └── auth/        # Autenticação
+│   │   │   └── common/      # Utilitários compartilhados
 │   │   └── test/            # Testes E2E
 │   └── web/                 # Frontend Next.js
 │       ├── app/             # App Router
 │       ├── components/      # Componentes React
-│       ├── lib/             # Utilitários
+│       ├── lib/             # Utilitários (auth, etc)
 │       └── styles/          # Estilos globais
 ├── packages/
 │   ├── ui/                  # Design System
@@ -152,13 +193,32 @@ graph TB
 
 ## 🚀 Setup Local
 
+### Pré-requisitos
+
+- Node.js 18+ instalado
+- pnpm instalado (`npm install -g pnpm`)
+- Conta no MongoDB Atlas (gratuita)
+- Conta no GitHub (para OAuth)
+- Chave da OpenAI API (opcional, para features de IA)
+
 ### Instalação
+
+1. Clone o repositório:
+
+```bash
+git clone <url-do-repositorio>
+cd kb-ia
+```
+
+2. Instale as dependências:
 
 ```bash
 pnpm install
 ```
 
-### Executando o projeto
+3. Configure as variáveis de ambiente (veja seção abaixo)
+
+4. Execute o projeto:
 
 ```bash
 pnpm dev
@@ -169,7 +229,35 @@ Isso iniciará:
 - Frontend: http://localhost:3000
 - Backend: http://localhost:3001
 
-## Variáveis de Ambiente
+### Scripts Disponíveis
+
+```bash
+# Desenvolvimento
+pnpm dev              # Inicia frontend e backend em modo dev
+pnpm --filter web dev # Apenas frontend
+pnpm --filter api dev # Apenas backend
+
+# Build
+pnpm build            # Build de todos os apps
+pnpm --filter web build
+pnpm --filter api build
+
+# Testes
+pnpm test             # Executa todos os testes
+pnpm test:watch       # Modo watch
+pnpm test:coverage    # Com cobertura
+
+# Qualidade de código
+pnpm lint:check       # Verifica erros de lint
+pnpm lint:fix         # Corrige erros automaticamente
+pnpm format:check     # Verifica formatação
+pnpm format:fix       # Formata código
+
+# Commits
+pnpm commit           # Commit interativo com Commitizen
+```
+
+## 🔧 Variáveis de Ambiente
 
 ### Backend (`apps/api/.env`)
 
@@ -181,11 +269,15 @@ cp apps/api/.env.example apps/api/.env
 
 Variáveis necessárias:
 
-- `NODE_ENV` - Ambiente (development/production)
-- `PORT` - Porta do servidor (padrão: 3001)
-- `MONGODB_URI` - Connection string do MongoDB Atlas
-- `OPENAI_API_KEY` - Chave da API OpenAI (opcional - necessário para features de IA)
-- `CORS_ORIGIN` - Origem permitida para CORS (padrão: http://localhost:3000)
+| Variável         | Descrição                          | Obrigatório | Exemplo                                          |
+| ---------------- | ---------------------------------- | ----------- | ------------------------------------------------ |
+| `NODE_ENV`       | Ambiente de execução               | Sim         | `development` ou `production`                    |
+| `PORT`           | Porta do servidor                  | Não         | `3001` (padrão)                                  |
+| `MONGODB_URI`    | Connection string do MongoDB Atlas | Sim         | `mongodb+srv://user:pass@cluster.mongodb.net/db` |
+| `OPENAI_API_KEY` | Chave da API OpenAI                | Não\*       | `sk-...`                                         |
+| `CORS_ORIGIN`    | Origem permitida para CORS         | Sim         | `http://localhost:3000`                          |
+
+\*Necessário apenas para features de IA (geração de conteúdo e busca semântica)
 
 ### Frontend (`apps/web/.env.local`)
 
@@ -197,11 +289,13 @@ cp apps/web/.env.example apps/web/.env.local
 
 Variáveis necessárias:
 
-- `NEXT_PUBLIC_API_URL` - URL da API (http://localhost:3001)
-- `NEXTAUTH_URL` - URL da aplicação (http://localhost:3000)
-- `NEXTAUTH_SECRET` - Chave secreta para NextAuth
-- `GITHUB_ID` - GitHub OAuth Client ID (obrigatório)
-- `GITHUB_SECRET` - GitHub OAuth Client Secret (obrigatório)
+| Variável              | Descrição                   | Obrigatório | Exemplo                             |
+| --------------------- | --------------------------- | ----------- | ----------------------------------- |
+| `NEXT_PUBLIC_API_URL` | URL da API backend          | Sim         | `http://localhost:3001`             |
+| `NEXTAUTH_URL`        | URL da aplicação frontend   | Sim         | `http://localhost:3000`             |
+| `NEXTAUTH_SECRET`     | Chave secreta para NextAuth | Sim         | Gere com: `openssl rand -base64 32` |
+| `GITHUB_ID`           | GitHub OAuth Client ID      | Sim         | Obtido no GitHub Developer Settings |
+| `GITHUB_SECRET`       | GitHub OAuth Client Secret  | Sim         | Obtido no GitHub Developer Settings |
 
 #### Como configurar GitHub OAuth
 
@@ -216,70 +310,149 @@ Variáveis necessárias:
 6. Clique em "Generate a new client secret"
 7. Copie o **Client Secret** e cole em `GITHUB_SECRET`
 
-## Configuração do MongoDB Atlas
+## 🗄️ Configuração do MongoDB Atlas
 
-1. Crie uma conta gratuita em [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Crie um novo cluster (Free Tier M0)
-3. Configure o acesso:
-   - Adicione seu IP atual na whitelist
-   - Crie um usuário de banco de dados
-4. Obtenha a connection string:
-   - Clique em "Connect" → "Connect your application"
-   - Copie a connection string
-   - Substitua `<password>` pela senha do usuário
-   - Adicione no `.env` como `MONGODB_URI`
+### Passo a Passo
 
-## 🔐 Autenticação
+1. **Criar conta e cluster**
+   - Acesse [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+   - Crie uma conta gratuita
+   - Crie um novo cluster (Free Tier M0 - suficiente para o projeto)
+
+2. **Configurar acesso**
+   - Vá em "Database Access" → "Add New Database User"
+   - Crie um usuário com senha (anote as credenciais)
+   - Vá em "Network Access" → "Add IP Address"
+   - Adicione seu IP atual ou `0.0.0.0/0` (permite qualquer IP - apenas para desenvolvimento)
+
+3. **Obter connection string**
+   - Clique em "Connect" no seu cluster
+   - Selecione "Connect your application"
+   - Copie a connection string (formato: `mongodb+srv://...`)
+   - Substitua `<password>` pela senha do usuário criado
+   - Adicione no arquivo `apps/api/.env` como `MONGODB_URI`
+
+4. **Configurar Vector Search Index** (necessário para busca semântica)
+   - Acesse seu cluster → "Browse Collections"
+   - Selecione a collection `articles`
+   - Vá em "Search Indexes" → "Create Search Index"
+   - Selecione "JSON Editor" e cole:
+
+   ```json
+   {
+     "fields": [
+       {
+         "type": "vector",
+         "path": "content_vector",
+         "numDimensions": 1536,
+         "similarity": "cosine"
+       }
+     ]
+   }
+   ```
+
+   - Nomeie o índice como `vector_index`
+   - Aguarde a criação (pode levar alguns minutos)
+
+## 🔐 Configuração da Autenticação
 
 O sistema usa **GitHub OAuth** via NextAuth.js para autenticação. Ao fazer login, você será redirecionado para o GitHub para autorizar a aplicação.
 
-A autenticação é totalmente gerenciada pelo NextAuth.js no frontend, sem necessidade de tokens JWT customizados.
+### Como funciona
+
+1. Usuário clica em "Entrar com GitHub"
+2. É redirecionado para o GitHub para autorizar
+3. GitHub retorna com código de autorização
+4. NextAuth.js cria uma sessão JWT
+5. Usuário é redirecionado para o dashboard
+
+### Decisões Arquiteturais
+
+- **Por que GitHub OAuth?** Simplicidade e segurança - não precisamos gerenciar senhas
+- **Por que JWT?** Sessões stateless, escaláveis e sem necessidade de banco de sessões
+- **Por que NextAuth.js?** Abstração robusta, bem mantida e com suporte a múltiplos providers
 
 ## 🧪 Como Testar
 
-### Executar todos os testes
+### Executar Testes
 
 ```bash
+# Todos os testes
 pnpm test
+
+# Apenas backend
+pnpm --filter api test
+
+# Apenas frontend
+pnpm --filter web test
+
+# Com cobertura
+pnpm test:coverage
+
+# Modo watch (desenvolvimento)
+pnpm test:watch
 ```
 
-### Executar testes do backend
+### Cobertura de Testes
+
+O projeto possui testes de integração para os fluxos críticos:
+
+- ✅ Criação de artigos com geração automática de embeddings
+- ✅ Busca vetorial semântica
+- ✅ Geração de conteúdo com IA
+- ✅ Autenticação e proteção de rotas
+- ✅ CRUD de Spaces e Articles
+
+### Testando Manualmente
+
+#### 1. Criar um Space
 
 ```bash
-cd apps/api && pnpm test
+curl -X POST http://localhost:3001/spaces \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Documentação Técnica",
+    "description": "Artigos sobre arquitetura e boas práticas"
+  }'
 ```
 
-### Executar testes do frontend
-
-```bash
-cd apps/web && pnpm test
-```
-
-### Executar testes com coverage
-
-```bash
-pnpm test --coverage
-```
-
-### Exemplos de uso da API
-
-#### Criar um artigo
+#### 2. Criar um Artigo
 
 ```bash
 curl -X POST http://localhost:3001/articles \
   -H "Content-Type: application/json" \
   -d '{
-    "title": "Meu Artigo",
-    "content": "Conteúdo do artigo...",
-    "spaceId": "space-id",
-    "tags": ["javascript", "tutorial"]
+    "title": "Introdução ao TypeScript",
+    "content": "TypeScript é um superset do JavaScript...",
+    "spaceId": "<space-id>",
+    "tags": ["typescript", "javascript"]
   }'
 ```
 
-#### Buscar artigos
+#### 3. Gerar Conteúdo com IA
 
 ```bash
-curl "http://localhost:3001/articles/search?query=javascript&limit=10"
+curl -X POST http://localhost:3001/articles/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Escreva um artigo sobre Clean Code em TypeScript"
+  }'
+```
+
+#### 4. Buscar Artigos (Busca Semântica)
+
+```bash
+curl "http://localhost:3001/articles/search?q=boas+práticas+de+código&limit=5"
+```
+
+#### 5. Upload de Arquivo
+
+```bash
+curl -X POST http://localhost:3001/articles/upload \
+  -F "file=@documento.md" \
+  -F "spaceId=<space-id>" \
+  -F "tags[]=markdown" \
+  -F "tags[]=documentacao"
 ```
 
 ## 🌐 Deploy em Produção
@@ -289,28 +462,85 @@ curl "http://localhost:3001/articles/search?query=javascript&limit=10"
 - **Frontend**: [https://knowledge-base-ai-eosin.vercel.app/](https://knowledge-base-ai-eosin.vercel.app/)
 - **API**: [https://api-production-43ba.up.railway.app/api/help](https://api-production-43ba.up.railway.app/api/help)
 
-### 🚀 Plataformas
+### 🚀 Plataformas Utilizadas
 
-- **Frontend**: Vercel
-- **Backend**: Railway
-- **Banco de Dados**: MongoDB Atlas
+| Serviço        | Plataforma    | Tier      | Motivo da Escolha                                          |
+| -------------- | ------------- | --------- | ---------------------------------------------------------- |
+| Frontend       | Vercel        | Free      | Deploy automático, edge network, otimizado para Next.js    |
+| Backend        | Railway       | Free      | Suporte a monorepo, fácil configuração, logs em tempo real |
+| Banco de Dados | MongoDB Atlas | M0 (Free) | Vector Search, escalável, interface amigável               |
 
-### Variáveis de ambiente para produção
+### 📋 Guia de Deploy
+
+#### Deploy do Backend (Railway)
+
+1. Crie uma conta no [Railway](https://railway.app/)
+2. Conecte seu repositório GitHub
+3. Configure o projeto:
+   - **Root Directory**: `apps/api`
+   - **Build Command**: `pnpm install && pnpm --filter api build`
+   - **Start Command**: `pnpm --filter api start:prod`
+4. Adicione as variáveis de ambiente (veja tabela abaixo)
+5. Deploy automático será acionado
+
+#### Deploy do Frontend (Vercel)
+
+1. Crie uma conta na [Vercel](https://vercel.com/)
+2. Importe o repositório GitHub
+3. Configure o projeto:
+   - **Framework Preset**: Next.js
+   - **Root Directory**: `apps/web`
+   - **Build Command**: `pnpm build`
+   - **Output Directory**: `.next`
+4. Adicione as variáveis de ambiente (veja tabela abaixo)
+5. Deploy automático será acionado
+
+### 🔐 Variáveis de Ambiente para Produção
+
+#### Backend (Railway)
 
 ```bash
-# Backend
 NODE_ENV=production
-MONGODB_URI=mongodb+srv://...
-OPENAI_API_KEY=sk-...
-CORS_ORIGIN=https://seu-dominio.com
-
-# Frontend
-NEXT_PUBLIC_API_URL=https://api.seu-dominio.com
-NEXTAUTH_URL=https://seu-dominio.com
-NEXTAUTH_SECRET=sua-chave-nextauth
-GITHUB_ID=seu-github-client-id
-GITHUB_SECRET=seu-github-client-secret
+PORT=3001
+MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/kb-ia
+OPENAI_API_KEY=sk-proj-...
+CORS_ORIGIN=https://knowledge-base-ai-eosin.vercel.app
 ```
+
+#### Frontend (Vercel)
+
+```bash
+NEXT_PUBLIC_API_URL=https://api-production-43ba.up.railway.app
+NEXTAUTH_URL=https://knowledge-base-ai-eosin.vercel.app
+NEXTAUTH_SECRET=<gere-com-openssl-rand-base64-32>
+GITHUB_ID=<seu-github-oauth-client-id>
+GITHUB_SECRET=<seu-github-oauth-client-secret>
+```
+
+### ⚙️ Configurações Adicionais
+
+#### GitHub OAuth para Produção
+
+1. Vá em [GitHub Developer Settings](https://github.com/settings/developers)
+2. Edite sua OAuth App ou crie uma nova
+3. Atualize as URLs:
+   - **Homepage URL**: `https://knowledge-base-ai-eosin.vercel.app`
+   - **Authorization callback URL**: `https://knowledge-base-ai-eosin.vercel.app/api/auth/callback/github`
+
+#### CORS no Backend
+
+Certifique-se de que `CORS_ORIGIN` no Railway aponta para o domínio do Vercel.
+
+### 🔄 CI/CD
+
+O projeto possui GitHub Actions configurado que executa:
+
+- ✅ Lint (ESLint + Prettier)
+- ✅ Type checking (TypeScript)
+- ✅ Testes unitários e de integração
+- ✅ Build de produção
+
+Todos os checks devem passar antes do merge para `main`.
 
 ## 🔧 Troubleshooting
 
@@ -392,4 +622,49 @@ DEBUG=* pnpm --filter api dev
 pnpm --filter web dev --debug
 ```
 
----
+## 📚 Estrutura de Dados
+
+### Schema: Space
+
+```typescript
+{
+  _id: ObjectId,
+  name: string,
+  description: string,
+  authorId: string,
+  settings: {
+    primaryColor?: string,
+    logo?: string
+  },
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+### Schema: Article
+
+```typescript
+{
+  _id: ObjectId,
+  title: string,
+  content: string,
+  spaceId: ObjectId,
+  authorId: string,
+  tags: string[],
+  content_vector: number[], // 1536 dimensions (OpenAI embedding)
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+## 📞 Contato e Suporte
+
+Este projeto foi desenvolvido como parte de um desafio técnico. Para dúvidas ou sugestões sobre a implementação, entre em contato através do GitHub.
+
+### Recursos Úteis
+
+- [Documentação do NestJS](https://docs.nestjs.com/)
+- [Documentação do Next.js](https://nextjs.org/docs)
+- [MongoDB Vector Search](https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-overview/)
+- [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
+- [NextAuth.js Documentation](https://next-auth.js.org/)
