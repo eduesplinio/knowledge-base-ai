@@ -45,6 +45,7 @@ export default function SpaceDetailPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
   const [articleForm, setArticleForm] = useState({ title: '', content: '', tags: '' });
   const [isSavingArticle, setIsSavingArticle] = useState(false);
@@ -77,14 +78,20 @@ export default function SpaceDetailPage() {
   const handleDelete = async () => {
     if (!deleteId) return;
 
+    setIsDeleting(true);
     try {
       await deleteArticle(deleteId);
       setArticles(articles.filter((article) => article._id !== deleteId));
-      success('Artigo excluído com sucesso!');
       setDeleteId(null);
+      // Aguarda um tick para garantir que o estado foi atualizado
+      setTimeout(() => {
+        success('Artigo excluído com sucesso!');
+      }, 0);
     } catch (error) {
       console.error('Erro ao deletar artigo:', error);
       showError('Erro ao excluir artigo');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -255,8 +262,10 @@ export default function SpaceDetailPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Excluir</AlertDialogAction>
+            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting ? 'Excluindo...' : 'Excluir'}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

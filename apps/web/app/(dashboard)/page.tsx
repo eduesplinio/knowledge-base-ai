@@ -70,8 +70,9 @@ export default function DashboardPage() {
     try {
       await deleteSpace(spaceToDelete._id);
       setSpaces(spaces.filter((s) => s._id !== spaceToDelete._id));
+      window.dispatchEvent(new CustomEvent('spacesUpdated'));
       success('Espaço excluído com sucesso!');
-      window.location.reload();
+      setSpaceToDelete(null);
     } catch (err) {
       console.error('Erro ao deletar espaço:', err);
       showError('Erro ao excluir espaço');
@@ -113,12 +114,13 @@ export default function DashboardPage() {
       if (editingSpace) {
         const updatedSpace = await updateSpace(editingSpace._id, formData);
         setSpaces(spaces.map((s) => (s._id === editingSpace._id ? updatedSpace : s)));
+        window.dispatchEvent(new CustomEvent('spacesUpdated'));
         success('Espaço atualizado com sucesso!');
       } else {
         const newSpace = await createSpace(formData);
         setSpaces([...spaces, newSpace]);
+        window.dispatchEvent(new CustomEvent('spacesUpdated'));
         success('Espaço criado com sucesso!');
-        window.location.reload();
       }
       handleModalClose();
     } catch (err) {
@@ -153,7 +155,7 @@ export default function DashboardPage() {
     <div className="min-h-[80vh]">
       <div className="text-center space-y-6 py-12 max-w-3xl mx-auto">
         <div className="flex justify-center">
-          <MdMenuBook className="w-16 h-16 text-foreground/70" />
+          <MdMenuBook className="w-16 h-16 text-foreground" />
         </div>
 
         <div className="space-y-2">

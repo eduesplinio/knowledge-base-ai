@@ -7,13 +7,15 @@ import {
   MdChevronLeft,
   MdChevronRight,
   MdLogout,
-  MdMenuBook,
+  MdOutlineMenuBook,
   MdExpandMore,
   MdExpandLess,
   MdOutlineDashboard,
   MdFolderOpen,
   MdSearch,
   MdOutlineLibraryBooks,
+  MdLightMode,
+  MdDarkMode,
 } from 'react-icons/md';
 import { fetchSpaces } from '@/lib/api';
 import {
@@ -25,6 +27,8 @@ import {
 import { Button } from '@workspace/ui/components/button';
 import { signOut } from 'next-auth/react';
 import { SearchModal } from '@/components/search/search-modal';
+import { getKeyboardShortcut } from '@/lib/keyboard';
+import { useTheme } from 'next-themes';
 
 interface Space {
   _id: string;
@@ -49,9 +53,17 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
   });
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     loadSpaces();
+
+    const handleSpacesUpdate = () => {
+      loadSpaces();
+    };
+
+    window.addEventListener('spacesUpdated', handleSpacesUpdate);
+    return () => window.removeEventListener('spacesUpdated', handleSpacesUpdate);
   }, []);
 
   const loadSpaces = async () => {
@@ -167,7 +179,7 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
                     }
                   }}
                 >
-                  <MdMenuBook className="w-6 h-6 text-foreground" />
+                  <MdOutlineMenuBook className="w-6 h-6 text-primary" />
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Base de Conhecimento</TooltipContent>
@@ -176,15 +188,15 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
         ) : (
           <Link
             href="/"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 group transition-all"
             onClick={() => {
               if (isMobile && onToggleCollapse) {
                 onToggleCollapse();
               }
             }}
           >
-            <MdMenuBook className="w-6 h-6 text-foreground" />
-            <span className="text-lg font-semibold whitespace-nowrap text-foreground">
+            <MdOutlineMenuBook className="w-6 h-6 text-primary/85 group-hover:text-primary transition-colors" />
+            <span className="text-lg font-semibold whitespace-nowrap text-foreground/80 group-hover:text-primary transition-colors">
               Base de Conhecimento
             </span>
           </Link>
@@ -221,7 +233,13 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
               Pesquisar
             </div>
             <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-              <span className="text-xs">⌘</span>K
+              {getKeyboardShortcut().isMac ? (
+                <>
+                  <span className="text-xs">⌘</span>K
+                </>
+              ) : (
+                'Ctrl+K'
+              )}
             </kbd>
           </Button>
         )}
@@ -338,48 +356,94 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
 
       <div className="p-4 space-y-2">
         {isCollapsed ? (
-          <div className="flex justify-center">
+          <div className="space-y-2">
+            <div className="flex justify-center">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    >
+                      {theme === 'dark' ? (
+                        <MdLightMode className="h-4 w-4" />
+                      ) : (
+                        <MdDarkMode className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">Alternar tema</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div className="flex justify-center">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => signOut({ callbackUrl: '/login' })}
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    >
+                      <MdLogout className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">Sair</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <Button
+              variant="ghost"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="w-full justify-start text-muted-foreground hover:text-foreground"
+            >
+              {theme === 'dark' ? (
+                <MdLightMode className="mr-2 h-4 w-4" />
+              ) : (
+                <MdDarkMode className="mr-2 h-4 w-4" />
+              )}
+              Alternar tema
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              className="w-full justify-start text-muted-foreground hover:text-foreground"
+            >
+              <MdLogout className="mr-2 h-4 w-4" />
+              Sair
+            </Button>
+          </div>
+        )}
+
+        {!isMobile && onToggleCollapse && (
+          <div className={`flex ${isCollapsed ? 'justify-center' : 'justify-end'}`}>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => signOut({ callbackUrl: '/login' })}
+                    onClick={onToggleCollapse}
                     className="h-8 w-8 text-muted-foreground hover:text-foreground"
                   >
-                    <MdLogout className="h-4 w-4" />
+                    {isCollapsed ? (
+                      <MdChevronRight className="h-4 w-4" />
+                    ) : (
+                      <MdChevronLeft className="h-4 w-4" />
+                    )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">Sair</TooltipContent>
+                <TooltipContent side={isCollapsed ? 'right' : 'left'}>
+                  {isCollapsed ? 'Expandir menu' : 'Recolher menu'}
+                </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div>
-        ) : (
-          <Button
-            variant="ghost"
-            onClick={() => signOut({ callbackUrl: '/login' })}
-            className="w-full justify-start text-muted-foreground hover:text-foreground"
-          >
-            <MdLogout className="mr-2 h-4 w-4" />
-            Sair
-          </Button>
-        )}
-
-        {!isMobile && onToggleCollapse && (
-          <div className={`flex ${isCollapsed ? 'justify-center' : 'justify-end'}`}>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onToggleCollapse}
-              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-            >
-              {isCollapsed ? (
-                <MdChevronRight className="h-4 w-4" />
-              ) : (
-                <MdChevronLeft className="h-4 w-4" />
-              )}
-            </Button>
           </div>
         )}
       </div>

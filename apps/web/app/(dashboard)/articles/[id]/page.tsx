@@ -47,6 +47,7 @@ export default function ArticleViewPage() {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', content: '', tags: '' });
   const [isSaving, setIsSaving] = useState(false);
@@ -83,13 +84,19 @@ export default function ArticleViewPage() {
   }, [loadArticle]);
 
   const handleDelete = async () => {
+    setIsDeleting(true);
     try {
       await deleteArticle(articleId);
-      success('Artigo excluído com sucesso!');
-      setTimeout(() => router.push(`/spaces/${article?.spaceId || ''}`), 1500);
+      setShowDeleteDialog(false);
+      setIsDeleting(false);
+      router.push(`/spaces/${article?.spaceId || ''}`);
+      setTimeout(() => {
+        success('Artigo excluído com sucesso!');
+      }, 100);
     } catch (error) {
       console.error('Erro ao deletar artigo:', error);
       showError('Erro ao excluir artigo');
+      setIsDeleting(false);
     }
   };
 
@@ -318,8 +325,10 @@ export default function ArticleViewPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Excluir</AlertDialogAction>
+            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting ? 'Excluindo...' : 'Excluir'}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
