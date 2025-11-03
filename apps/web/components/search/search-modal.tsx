@@ -9,10 +9,9 @@ import { MdSearch } from 'react-icons/md';
 interface SearchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSearch?: () => void;
 }
 
-export function SearchModal({ open, onOpenChange, onSearch }: SearchModalProps) {
+export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   const [query, setQuery] = useState('');
   const router = useRouter();
 
@@ -31,9 +30,8 @@ export function SearchModal({ open, onOpenChange, onSearch }: SearchModalProps) 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query)}`);
       onOpenChange(false);
-      onSearch?.();
+      router.push(`/search?q=${encodeURIComponent(query)}`);
       setQuery('');
     }
   };

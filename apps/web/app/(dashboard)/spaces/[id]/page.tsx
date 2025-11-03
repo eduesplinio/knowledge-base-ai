@@ -62,7 +62,7 @@ export default function SpaceDetailPage() {
         fetchArticles(spaceId),
       ]);
       setSpace(spaceData);
-      setArticles(articlesData);
+      setArticles(articlesData.sort((a: Article, b: Article) => a.title.localeCompare(b.title)));
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
     } finally {
@@ -175,7 +175,11 @@ export default function SpaceDetailPage() {
           content: articleForm.content,
           tags,
         });
-        setArticles(articles.map((a) => (a._id === editingArticle._id ? updatedArticle : a)));
+        setArticles(
+          articles
+            .map((a) => (a._id === editingArticle._id ? updatedArticle : a))
+            .sort((a: Article, b: Article) => a.title.localeCompare(b.title))
+        );
         success('Artigo atualizado com sucesso!');
       } else {
         const newArticle = await createArticle({
@@ -184,7 +188,9 @@ export default function SpaceDetailPage() {
           spaceId,
           tags,
         });
-        setArticles([...articles, newArticle]);
+        setArticles(
+          [...articles, newArticle].sort((a: Article, b: Article) => a.title.localeCompare(b.title))
+        );
         success('Artigo criado com sucesso!');
       }
 
@@ -215,14 +221,22 @@ export default function SpaceDetailPage() {
 
       <div>
         <h1 className="text-3xl font-bold">{space.name}</h1>
-        {space.description && <p className="text-muted-foreground mt-1">{space.description}</p>}
+        {space.description && (
+          <p className="text-muted-foreground mt-1 whitespace-pre-wrap">{space.description}</p>
+        )}
       </div>
 
       <div className="flex items-center gap-3">
         <Button onClick={handleCreateArticle}>Novo Artigo</Button>
         <FileUpload
           spaceId={spaceId}
-          onArticleCreated={(article) => setArticles([...articles, article])}
+          onArticleCreated={(article) =>
+            setArticles(
+              [...articles, article].sort((a: Article, b: Article) =>
+                a.title.localeCompare(b.title)
+              )
+            )
+          }
         />
       </div>
 

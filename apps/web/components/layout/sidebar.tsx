@@ -41,7 +41,12 @@ interface SidebarProps {
 export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: SidebarProps) {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [spacesExpanded, setSpacesExpanded] = useState(false);
+  const [spacesExpanded, setSpacesExpanded] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('spacesExpanded') === 'true';
+    }
+    return false;
+  });
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const pathname = usePathname();
 
@@ -239,7 +244,11 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => setSpacesExpanded(!spacesExpanded)}
+                      onClick={() => {
+                        const newExpanded = !spacesExpanded;
+                        setSpacesExpanded(newExpanded);
+                        localStorage.setItem('spacesExpanded', newExpanded.toString());
+                      }}
                       className={`h-8 w-8 ${
                         spacesExpanded
                           ? 'bg-accent text-accent-foreground'
@@ -280,7 +289,11 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
           ) : (
             <Button
               variant="ghost"
-              onClick={() => setSpacesExpanded(!spacesExpanded)}
+              onClick={() => {
+                const newExpanded = !spacesExpanded;
+                setSpacesExpanded(newExpanded);
+                localStorage.setItem('spacesExpanded', newExpanded.toString());
+              }}
               className="w-full justify-between px-3 py-2 h-auto text-sm font-medium text-muted-foreground hover:text-foreground"
             >
               <div className="flex items-center gap-2">
@@ -371,11 +384,7 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
         )}
       </div>
 
-      <SearchModal
-        open={searchModalOpen}
-        onOpenChange={setSearchModalOpen}
-        onSearch={isMobile && onToggleCollapse ? onToggleCollapse : undefined}
-      />
+      <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
     </aside>
   );
 }

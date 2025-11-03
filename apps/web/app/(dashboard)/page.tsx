@@ -16,9 +16,9 @@ import {
 } from '@workspace/ui/components/alert-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { Input } from '@workspace/ui/components/input';
-import { Textarea } from '@workspace/ui/components/textarea';
+
 import { MdAdd, MdMenuBook } from 'react-icons/md';
-import { SearchBar } from '@/components/search/search-bar';
+import { InlineSearch } from '@/components/search/inline-search';
 import { Loading } from '@/components/ui/loading';
 import { useToast } from '@workspace/ui/hooks/use-toast';
 
@@ -39,6 +39,7 @@ export default function DashboardPage() {
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [isSaving, setIsSaving] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+
   const { success, error: showError } = useToast();
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function DashboardPage() {
       await deleteSpace(spaceToDelete._id);
       setSpaces(spaces.filter((s) => s._id !== spaceToDelete._id));
       success('Espaço excluído com sucesso!');
-      setSpaceToDelete(null);
+      window.location.reload();
     } catch (err) {
       console.error('Erro ao deletar espaço:', err);
       showError('Erro ao excluir espaço');
@@ -117,6 +118,7 @@ export default function DashboardPage() {
         const newSpace = await createSpace(formData);
         setSpaces([...spaces, newSpace]);
         success('Espaço criado com sucesso!');
+        window.location.reload();
       }
       handleModalClose();
     } catch (err) {
@@ -162,7 +164,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="max-w-lg mx-auto">
-          <SearchBar onOpenSearch={() => setOpenDropdownId('search')} />
+          <InlineSearch />
         </div>
       </div>
 
@@ -242,7 +244,7 @@ export default function DashboardPage() {
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium block">Descrição</label>
-              <Textarea
+              <textarea
                 value={formData.description}
                 onChange={(e) => {
                   if (e.target.value.length <= 150) {
@@ -250,9 +252,9 @@ export default function DashboardPage() {
                   }
                 }}
                 placeholder="Descrição do espaço (opcional)"
-                rows={3}
+                rows={4}
                 maxLength={150}
-                className="resize-none"
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
               />
               <div className="text-xs text-muted-foreground text-right">
                 {formData.description.length}/150

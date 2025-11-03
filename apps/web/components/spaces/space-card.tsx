@@ -62,7 +62,7 @@ export function SpaceCard({
               </div>
             </div>
             {space.description && (
-              <div className="text-sm text-muted-foreground/80 leading-tight line-clamp-2 break-words overflow-hidden">
+              <div className="text-sm text-muted-foreground/80 leading-tight line-clamp-2 break-words overflow-hidden whitespace-pre-wrap">
                 {space.description}
               </div>
             )}

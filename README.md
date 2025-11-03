@@ -43,7 +43,7 @@ Este projeto foi desenvolvido como parte de um desafio técnico para demonstrar 
 - [x] Proteção de rotas no frontend e backend
 - [x] CORS configurado para produção
 
-### � Gerenciamfento de Conteúdo
+### 📝 Gerenciamento de Conteúdo
 
 - [x] CRUD completo de Spaces (categorias)
 - [x] CRUD completo de Articles (artigos)
@@ -206,7 +206,7 @@ graph TB
 1. Clone o repositório:
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/eduesplinio/knowledge-base-ai.git
 cd kb-ia
 ```
 

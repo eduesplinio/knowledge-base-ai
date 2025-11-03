@@ -8,7 +8,12 @@ import { MdLogout, MdMenuBook, MdMenu } from 'react-icons/md';
 import { Sidebar } from '@/components/layout/sidebar';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sidebarCollapsed') === 'true';
+    }
+    return false;
+  });
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -71,7 +76,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             onToggleCollapse={
               isMobile
                 ? () => setMobileMenuOpen(false)
-                : () => setSidebarCollapsed(!sidebarCollapsed)
+                : () => {
+                    const newCollapsed = !sidebarCollapsed;
+                    setSidebarCollapsed(newCollapsed);
+                    localStorage.setItem('sidebarCollapsed', newCollapsed.toString());
+                  }
             }
           />
         </div>

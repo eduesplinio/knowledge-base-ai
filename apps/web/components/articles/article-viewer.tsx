@@ -23,7 +23,7 @@ export function ArticleViewer({ article }: ArticleViewerProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-3xl">{article.title}</CardTitle>
+        <CardTitle className="text-3xl break-all leading-tight">{article.title}</CardTitle>
         <p className="text-sm text-muted-foreground">Criado em: {formattedDate}</p>
       </CardHeader>
       <CardContent className="space-y-6">

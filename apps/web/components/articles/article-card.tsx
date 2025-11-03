@@ -66,7 +66,7 @@ export function ArticleCard({ article, onDelete, onEdit }: ArticleCardProps) {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2">
-              <h3 className="font-medium text-base truncate group-hover:text-primary transition-colors">
+              <h3 className="font-medium text-base break-all group-hover:text-primary transition-colors leading-tight">
                 {article.title}
               </h3>
               {article.tags && article.tags.length > 0 && (
