@@ -53,6 +53,7 @@ export default function SpaceDetailPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiError, setAiError] = useState('');
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const { success, error: showError } = useToast();
 
   const loadData = useCallback(async () => {
@@ -83,7 +84,7 @@ export default function SpaceDetailPage() {
       await deleteArticle(deleteId);
       setArticles(articles.filter((article) => article._id !== deleteId));
       setDeleteId(null);
-      // Aguarda um tick para garantir que o estado foi atualizado
+      setOpenDropdownId(null);
       setTimeout(() => {
         success('Artigo excluído com sucesso!');
       }, 0);
@@ -115,6 +116,7 @@ export default function SpaceDetailPage() {
       setAiPrompt('');
       setAiError('');
       setIsArticleModalOpen(true);
+      setOpenDropdownId(null);
     }
   };
 
@@ -251,6 +253,8 @@ export default function SpaceDetailPage() {
         articles={articles}
         onDelete={(id) => setDeleteId(id)}
         onEdit={handleEditArticle}
+        openDropdownId={openDropdownId}
+        onDropdownChange={setOpenDropdownId}
       />
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>

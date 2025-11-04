@@ -12,9 +12,18 @@ interface ArticleListProps {
   onDelete?: (id: string) => void;
   onEdit?: (id: string) => void;
   searchQuery?: string;
+  openDropdownId?: string | null;
+  onDropdownChange?: (id: string | null) => void;
 }
 
-export function ArticleList({ articles, onDelete, onEdit, searchQuery }: ArticleListProps) {
+export function ArticleList({
+  articles,
+  onDelete,
+  onEdit,
+  searchQuery,
+  openDropdownId,
+  onDropdownChange,
+}: ArticleListProps) {
   if (!articles || articles.length === 0) {
     if (searchQuery && searchQuery.trim()) {
       return (
@@ -41,6 +50,8 @@ export function ArticleList({ articles, onDelete, onEdit, searchQuery }: Article
           article={article}
           onDelete={onDelete ? () => onDelete(article._id) : undefined}
           onEdit={onEdit ? () => onEdit(article._id) : undefined}
+          isDropdownOpen={openDropdownId === article._id}
+          onDropdownChange={(open) => onDropdownChange?.(open ? article._id : null)}
         />
       ))}
     </div>

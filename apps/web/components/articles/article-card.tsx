@@ -22,14 +22,23 @@ interface ArticleCardProps {
   };
   onDelete?: () => void;
   onEdit?: () => void;
+  isDropdownOpen?: boolean;
+  onDropdownChange?: (open: boolean) => void;
 }
 
-export function ArticleCard({ article, onDelete, onEdit }: ArticleCardProps) {
+export function ArticleCard({
+  article,
+  onDelete,
+  onEdit,
+  isDropdownOpen = false,
+  onDropdownChange,
+}: ArticleCardProps) {
   const router = useRouter();
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    onDropdownChange?.(false);
     if (onEdit) {
       onEdit();
     } else {
@@ -40,6 +49,7 @@ export function ArticleCard({ article, onDelete, onEdit }: ArticleCardProps) {
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    onDropdownChange?.(false);
     if (onDelete) {
       onDelete();
     }
@@ -90,7 +100,7 @@ export function ArticleCard({ article, onDelete, onEdit }: ArticleCardProps) {
           </div>
 
           <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-            <DropdownMenu>
+            <DropdownMenu open={isDropdownOpen} onOpenChange={onDropdownChange}>
               <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <MdMoreVert className="h-4 w-4" />
