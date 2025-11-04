@@ -178,9 +178,9 @@ export default function DashboardPage() {
           >
             <div className="p-3 h-full flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-1.5 mb-2">
-                  <MdAdd className="w-[22px] h-[22px] text-primary flex-shrink-0" />
-                  <div className="text-base font-light group-hover:text-primary transition-colors">
+                <div className="flex flex-col gap-1.5 mb-2">
+                  <MdAdd className="w-[22px] h-[22px] text-muted-foreground flex-shrink-0" />
+                  <div className="text-base font-medium text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors">
                     Adicionar espaço
                   </div>
                 </div>

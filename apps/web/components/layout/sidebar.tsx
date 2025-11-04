@@ -52,8 +52,13 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
     return false;
   });
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     loadSpaces();
@@ -367,7 +372,9 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
                       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                       className="h-8 w-8 text-muted-foreground hover:text-foreground"
                     >
-                      {theme === 'dark' ? (
+                      {!mounted ? (
+                        <MdDarkMode className="h-4 w-4" />
+                      ) : theme === 'dark' ? (
                         <MdLightMode className="h-4 w-4" />
                       ) : (
                         <MdDarkMode className="h-4 w-4" />
@@ -403,7 +410,9 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="w-full justify-start text-muted-foreground hover:text-foreground"
             >
-              {theme === 'dark' ? (
+              {!mounted ? (
+                <MdDarkMode className="mr-2 h-4 w-4" />
+              ) : theme === 'dark' ? (
                 <MdLightMode className="mr-2 h-4 w-4" />
               ) : (
                 <MdDarkMode className="mr-2 h-4 w-4" />

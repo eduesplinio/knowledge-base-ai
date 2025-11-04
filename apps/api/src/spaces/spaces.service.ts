@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, isValidObjectId } from 'mongoose';
+import { Model, isValidObjectId, Types } from 'mongoose';
 import { Space } from './schemas/space.schema';
 import { Article } from '../articles/schemas/article.schema';
 import { CreateSpaceDto } from './dto/create-space.dto';
@@ -63,8 +63,11 @@ export class SpacesService {
       throw new NotFoundException(`Espaço com ID ${id} não encontrado`);
     }
 
-    await this.articleModel.deleteMany({ spaceId: id }).exec();
-
+    await this.articleModel
+      .deleteMany({
+        $or: [{ spaceId: id }, { spaceId: new Types.ObjectId(id) }],
+      })
+      .exec();
     const result = await this.spaceModel.findByIdAndDelete(id).exec();
     return result;
   }

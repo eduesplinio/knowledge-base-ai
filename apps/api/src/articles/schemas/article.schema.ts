@@ -9,8 +9,8 @@ export class Article extends Document {
   @Prop({ required: true })
   content!: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Space', required: true })
-  spaceId!: Types.ObjectId;
+  @Prop({ required: true })
+  spaceId!: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   authorId!: Types.ObjectId;
