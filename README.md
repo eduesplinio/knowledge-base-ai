@@ -1,12 +1,9 @@
 <div align="center">
-  <svg width="64" height="64" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-    <rect width="32" height="32" fill="#f6f8fa" rx="6"/>
-    <g transform="translate(4, 4)" fill="#24292f">
-      <path fill="none" d="M0 0h24v24H0z"/>
-      <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
-      <path d="M17.5 10.5c.88 0 1.73.09 2.5.26V9.24c-.79-.15-1.64-.24-2.5-.24-1.7 0-3.24.29-4.5.83v1.66c1.13-.64 2.7-.99 4.5-.99zM13 12.49v1.66c1.13-.64 2.7-.99 4.5-.99.88 0 1.73.09 2.5.26V11.9c-.79-.15-1.64-.24-2.5-.24-1.7 0-3.24.3-4.5.83zM17.5 14.33c-1.7 0-3.24.29-4.5.83v1.66c1.13-.64 2.7-.99 4.5-.99.88 0 1.73.09 2.5.26v-1.52c-.79-.16-1.64-.24-2.5-.24z"/>
-    </g>
-  </svg>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.iconify.design/material-symbols/menu-book.svg?color=%23ffffff&width=64&height=64">
+    <source media="(prefers-color-scheme: light)" srcset="https://api.iconify.design/material-symbols/menu-book.svg?color=%2324292f&width=64&height=64">
+    <img src="https://api.iconify.design/material-symbols/menu-book.svg?color=%2324292f&width=64&height=64" alt="Knowledge Base Icon" />
+  </picture>
   <h1><a href="https://knowledge-base-ai-eosin.vercel.app/" target="_blank">Base de Conhecimento</a></h1>
   <p><strong>Plataforma de conhecimento interno potencializada por Inteligência Artificial</strong></p>
   
@@ -76,13 +73,29 @@ Plataforma de **conhecimento interno** com IA para criar, organizar e pesquisar 
 
 ## Stack Tecnológica
 
-| Camada       | Tecnologias                                               |
-| ------------ | --------------------------------------------------------- |
-| **Frontend** | Next.js 15, TypeScript, Tailwind, NextAuth.js, shadcn/ui  |
-| **Backend**  | NestJS 11, MongoDB, Mongoose, OpenAI API, JWT, Swagger    |
-| **DevOps**   | Turbo, pnpm, ESLint/Prettier, Jest, Husky, GitHub Actions |
+| Camada       | Tecnologias                                                          |
+| ------------ | -------------------------------------------------------------------- |
+| **Frontend** | Next.js 15, TypeScript, Tailwind, NextAuth.js, shadcn/ui             |
+| **Backend**  | NestJS 11, MongoDB, Mongoose, OpenAI API, JWT, Swagger               |
+| **DevOps**   | Turbo (monorepo), pnpm, ESLint/Prettier, Jest, Husky, GitHub Actions |
 
 ## Arquitetura
+
+### Estrutura do Monorepo
+
+```
+knowledge-base-ai/
+├── apps/
+│   ├── web/          # Frontend Next.js 15
+│   └── api/          # Backend NestJS 11
+├── packages/
+│   ├── ui/           # Componentes shadcn/ui compartilhados
+│   ├── eslint-config/    # Configurações ESLint
+│   └── typescript-config/ # Configurações TypeScript
+└── .github/workflows/    # CI/CD GitHub Actions
+```
+
+### Arquitetura de Sistema
 
 ```
 Frontend (Next.js)     API (NestJS)        Dados
