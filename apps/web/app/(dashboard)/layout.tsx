@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { Button } from '@workspace/ui/components/button';
-import { MdLogout, MdMenuBook, MdMenu } from 'react-icons/md';
+import { MdLogout, MdMenuBook, MdMenu, MdSearch } from 'react-icons/md';
 import { Sidebar } from '@/components/layout/sidebar';
+import { SearchModal } from '@/components/search/search-modal';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -16,6 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   });
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -60,9 +62,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <span className="text-lg font-semibold">KB</span>
           </Link>
 
-          <Button variant="ghost" size="icon" onClick={() => signOut({ callbackUrl: '/login' })}>
-            <MdLogout className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => setSearchModalOpen(true)}>
+              <MdSearch className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => signOut({ callbackUrl: '/login' })}>
+              <MdLogout className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -96,6 +103,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="container mx-auto px-4 py-8">{children}</div>
         </main>
       </div>
+
+      <SearchModal
+        open={searchModalOpen}
+        onOpenChange={setSearchModalOpen}
+        onSearch={() => setMobileMenuOpen(false)}
+      />
     </div>
   );
 }

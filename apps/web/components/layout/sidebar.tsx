@@ -209,44 +209,48 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
       </div>
 
       <div className="px-4 pb-4 space-y-4 flex-1">
-        {isCollapsed ? (
-          <div className="flex justify-center">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSearchModalOpen(true)}
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                  >
-                    <MdSearch className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">Pesquisar</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        ) : (
-          <Button
-            variant="ghost"
-            onClick={() => setSearchModalOpen(true)}
-            className="w-full justify-between text-muted-foreground hover:text-foreground"
-          >
-            <div className="flex items-center gap-2">
-              <MdSearch className="h-4 w-4" />
-              Pesquisar
-            </div>
-            <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-              {getKeyboardShortcut().isMac ? (
-                <>
-                  <span className="text-xs">⌘</span>K
-                </>
-              ) : (
-                'Ctrl+K'
-              )}
-            </kbd>
-          </Button>
+        {!isMobile && (
+          <>
+            {isCollapsed ? (
+              <div className="flex justify-center">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setSearchModalOpen(true)}
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                      >
+                        <MdSearch className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Pesquisar</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            ) : (
+              <Button
+                variant="ghost"
+                onClick={() => setSearchModalOpen(true)}
+                className="w-full justify-between text-muted-foreground hover:text-foreground"
+              >
+                <div className="flex items-center gap-2">
+                  <MdSearch className="h-4 w-4" />
+                  Pesquisar
+                </div>
+                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                  {getKeyboardShortcut().isMac ? (
+                    <>
+                      <span className="text-xs">⌘</span>K
+                    </>
+                  ) : (
+                    'Ctrl+K'
+                  )}
+                </kbd>
+              </Button>
+            )}
+          </>
         )}
 
         <div className={isCollapsed ? 'flex justify-center' : ''}>
