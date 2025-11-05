@@ -95,14 +95,43 @@ knowledge-base-ai/
 └── .github/workflows/    # CI/CD GitHub Actions
 ```
 
-### Arquitetura de Sistema
+### Arquitetura Completa do Sistema
 
-```
-Frontend (Next.js)     API (NestJS)        Dados
-├─ App Router              ├─ Articles Module    ├─ MongoDB Atlas
-├─ Components (shadcn)     ├─ Spaces Module      ├─ Vector Search
-├─ NextAuth.js             ├─ AI Service         └─ GitHub OAuth
-└─ Tailwind CSS            └─ Swagger Docs
+```mermaid
+flowchart TB
+    subgraph "Frontend (Next.js 15)"
+        A[App Router]
+        B[Components shadcn/ui]
+        C[NextAuth GitHub]
+        D[Tailwind CSS]
+    end
+
+    subgraph "Backend (NestJS 11)"
+        E[Controllers REST API]
+        F[Services Business Logic]
+        G[AI Service OpenAI]
+        H[Swagger Docs]
+    end
+
+    subgraph "Dados"
+        I[(MongoDB Atlas)]
+        J[Vector Search]
+        K[OpenAI API]
+    end
+
+    A --> E
+    B --> E
+    C --> E
+    E --> F
+    F --> G
+    G --> K
+    F --> I
+    I --> J
+
+    style A fill:#0070f3
+    style E fill:#e0234e
+    style I fill:#47a248
+    style K fill:#412991
 ```
 
 **Fluxo IA:** Prompt → GPT-4 → Embeddings → MongoDB → Busca Semântica
@@ -127,6 +156,11 @@ sequenceDiagram
     M-->>-A: Artigo salvo
     A-->>-W: Artigo criado
     W-->>-U: Exibe resultado
+
+    Note over W: Next.js Frontend
+    Note over A: NestJS Backend
+    Note over O: OpenAI API
+    Note over M: MongoDB Atlas
 ```
 
 ## Configuração
@@ -137,30 +171,21 @@ sequenceDiagram
 
 ### Variáveis de Ambiente
 
-**Backend (`apps/api/.env`):**
+Copie os arquivos de exemplo e configure:
 
 ```bash
-NODE_ENV=development
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/db
-OPENAI_API_KEY=sk-...
-CORS_ORIGIN=http://localhost:3000
-```
+# Backend
+cp apps/api/.env.example apps/api/.env
 
-**Frontend (`apps/web/.env.local`):**
-
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:3001
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=<openssl rand -base64 32>
-GITHUB_ID=<github-oauth-client-id>
-GITHUB_SECRET=<github-oauth-client-secret>
+# Frontend
+cp apps/web/.env.example apps/web/.env.local
 ```
 
 ### MongoDB Atlas Setup
 
 1. Criar cluster gratuito M0
 2. Configurar usuário e IP access
-3. Criar Vector Search Index:
+3. Criar Vector Search Index na collection `articles`:
 
 ```json
 {
