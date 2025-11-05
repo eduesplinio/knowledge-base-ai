@@ -39,7 +39,7 @@ describe('ArticlesController', () => {
         title: 'Meu Artigo',
         content: 'Conteúdo do artigo',
         spaceId: 'space123',
-        authorId: 'temp-user-id',
+        authorId: 'user123',
         content_vector: [0.1, 0.2, 0.3],
         tags: [],
         createdAt: new Date(),
@@ -58,10 +58,12 @@ describe('ArticlesController', () => {
         spaceId: 'space123',
       };
 
-      const result = await controller.create(dto);
+      const mockReq = { userId: 'user123' };
+
+      const result = await controller.create(dto, mockReq);
 
       expect(result).toEqual(mockArticle);
-      expect(mockCreate).toHaveBeenCalledWith(dto, 'temp-user-id');
+      expect(mockCreate).toHaveBeenCalledWith(dto, 'user123');
     });
   });
 
