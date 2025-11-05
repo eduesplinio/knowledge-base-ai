@@ -9,13 +9,31 @@ import { MdSearch } from 'react-icons/md';
 interface SearchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  enableKeyboardShortcut?: boolean;
 }
 
-export function SearchModal({ open, onOpenChange }: SearchModalProps) {
+export function SearchModal({
+  open,
+  onOpenChange,
+  enableKeyboardShortcut = false,
+}: SearchModalProps) {
   const [query, setQuery] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!enableKeyboardShortcut) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
@@ -25,7 +43,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onOpenChange]);
+  }, [onOpenChange, enableKeyboardShortcut]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +73,9 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
               autoFocus
             />
           </div>
-          <p className="text-sm text-muted-foreground">Pressione Enter para pesquisar</p>
+          {!isMobile && (
+            <p className="text-sm text-muted-foreground">Pressione Enter para pesquisar</p>
+          )}
         </form>
       </DialogContent>
     </Dialog>

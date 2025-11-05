@@ -159,8 +159,8 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-4xl font-normal tracking-tight">Base de Conhecimento</h1>
-          <p className="text-muted-foreground text-lg">
+          <h1 className="text-3xl md:text-4xl font-normal tracking-tight">Base de Conhecimento</h1>
+          <p className="text-muted-foreground text-sm md:text-lg">
             Seu conhecimento organizado e acessível com IA
           </p>
         </div>

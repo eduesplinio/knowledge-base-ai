@@ -39,10 +39,16 @@ interface Space {
 interface SidebarProps {
   isCollapsed: boolean;
   isMobile?: boolean;
+  onSearchOpen?: () => void;
   onToggleCollapse?: () => void;
 }
 
-export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: SidebarProps) {
+export function Sidebar({
+  isCollapsed,
+  isMobile = false,
+  onSearchOpen,
+  onToggleCollapse,
+}: SidebarProps) {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [spacesExpanded, setSpacesExpanded] = useState(() => {
@@ -51,7 +57,7 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
     }
     return false;
   });
-  const [searchModalOpen, setSearchModalOpen] = useState(false);
+
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
@@ -219,7 +225,7 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setSearchModalOpen(true)}
+                        onClick={() => onSearchOpen?.()}
                         className="h-8 w-8 text-muted-foreground hover:text-foreground"
                       >
                         <MdSearch className="h-4 w-4" />
@@ -232,7 +238,7 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
             ) : (
               <Button
                 variant="ghost"
-                onClick={() => setSearchModalOpen(true)}
+                onClick={() => onSearchOpen?.()}
                 className="w-full justify-between text-muted-foreground hover:text-foreground"
               >
                 <div className="flex items-center gap-2">
@@ -460,8 +466,6 @@ export function Sidebar({ isCollapsed, isMobile = false, onToggleCollapse }: Sid
           </div>
         )}
       </div>
-
-      <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
     </aside>
   );
 }

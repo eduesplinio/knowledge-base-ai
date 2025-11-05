@@ -80,6 +80,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Sidebar
             isCollapsed={sidebarCollapsed && !isMobile}
             isMobile={isMobile}
+            onSearchOpen={() => setSearchModalOpen(true)}
             onToggleCollapse={
               isMobile
                 ? () => setMobileMenuOpen(false)
@@ -104,7 +105,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </main>
       </div>
 
-      <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
+      {isMobile ? (
+        <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
+      ) : (
+        <SearchModal
+          open={searchModalOpen}
+          onOpenChange={setSearchModalOpen}
+          enableKeyboardShortcut={true}
+        />
+      )}
     </div>
   );
 }
