@@ -104,11 +104,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </main>
       </div>
 
-      <SearchModal
-        open={searchModalOpen}
-        onOpenChange={setSearchModalOpen}
-        onSearch={() => setMobileMenuOpen(false)}
-      />
+      <SearchModal open={searchModalOpen} onOpenChange={setSearchModalOpen} />
     </div>
   );
 }
