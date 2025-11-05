@@ -26,7 +26,6 @@ import {
 } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
 import { signOut } from 'next-auth/react';
-import { SearchModal } from '@/components/search/search-modal';
 import { getKeyboardShortcut } from '@/lib/keyboard';
 import { useTheme } from 'next-themes';
 

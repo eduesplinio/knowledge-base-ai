@@ -27,9 +27,28 @@ export const authOptions: AuthOptions = {
     signIn: '/login',
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: User; account?: Account | null }) {
-      if (user) {
-        token.id = user.id;
+    async jwt({ token, user, account }: { token: JWT; user?: User; account?: Account | null }) {
+      if (user && account) {
+        try {
+          const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+          const response = await fetch(`${apiUrl}/users/sync`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: user.email,
+              name: user.name,
+              githubId: account.providerAccountId,
+              avatar: user.image,
+            }),
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+            token.id = userData._id;
+          }
+        } catch (error) {
+          console.error('Error syncing user:', error);
+        }
       }
       return token;
     },

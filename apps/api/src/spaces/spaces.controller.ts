@@ -6,12 +6,20 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { SpacesService } from './spaces.service';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
+import { AuthGuard } from '../common/guards/auth.guard';
 
 @ApiTags('spaces')
 @Controller('spaces')
@@ -19,10 +27,15 @@ export class SpacesController {
   constructor(private readonly spacesService: SpacesService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Criar novo espaço' })
   @ApiResponse({ status: 201, description: 'Espaço criado com sucesso' })
-  create(@Body() createSpaceDto: CreateSpaceDto) {
-    return this.spacesService.create(createSpaceDto, 'temp-user-id');
+  @ApiSecurity('x-user-id')
+  create(
+    @Body() createSpaceDto: CreateSpaceDto,
+    @Request() req: { userId: string },
+  ) {
+    return this.spacesService.create(createSpaceDto, req.userId);
   }
 
   @Get()

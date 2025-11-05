@@ -10,6 +10,8 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import {
@@ -19,6 +21,7 @@ import {
   ApiTags,
   ApiConsumes,
   ApiBody,
+  ApiSecurity,
 } from '@nestjs/swagger';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -27,6 +30,7 @@ import { GenerateContentDto } from './dto/generate-content.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs/promises';
 import { UploadArticleDto } from './dto/upload-article.dto';
+import { AuthGuard } from '../common/guards/auth.guard';
 
 @ApiTags('articles')
 @Controller('articles')
@@ -34,10 +38,15 @@ export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Criar novo artigo' })
   @ApiResponse({ status: 201, description: 'Artigo criado com sucesso' })
-  create(@Body() createArticleDto: CreateArticleDto) {
-    return this.articlesService.create(createArticleDto, 'temp-user-id');
+  @ApiSecurity('x-user-id')
+  create(
+    @Body() createArticleDto: CreateArticleDto,
+    @Request() req: { userId: string },
+  ) {
+    return this.articlesService.create(createArticleDto, req.userId);
   }
 
   @Get()
@@ -117,7 +126,9 @@ export class ArticlesController {
   }
 
   @Post('upload')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Fazer upload de arquivo .md ou .txt como artigo' })
+  @ApiSecurity('x-user-id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -150,6 +161,7 @@ export class ArticlesController {
   async uploadArticle(
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadDto: UploadArticleDto,
+    @Request() req: { userId: string },
   ) {
     if (!file) {
       throw new BadRequestException('Nenhum arquivo foi enviado');
@@ -162,7 +174,7 @@ export class ArticlesController {
         content,
         file.originalname,
         uploadDto.spaceId,
-        'temp-user-id',
+        req.userId,
         uploadDto.tags,
       );
       await fs.unlink(file.path);

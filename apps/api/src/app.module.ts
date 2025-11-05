@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SpacesModule } from './spaces/spaces.module';
 import { ArticlesModule } from './articles/articles.module';
 import { AiModule } from './ai/ai.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { AiModule } from './ai/ai.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI!),
+    UsersModule,
     SpacesModule,
     ArticlesModule,
     AiModule,

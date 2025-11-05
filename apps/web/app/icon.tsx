@@ -6,8 +6,6 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-const cacheBust = Math.random();
-
 export default function Icon() {
   return new ImageResponse(
     (

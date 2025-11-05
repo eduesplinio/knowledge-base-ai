@@ -26,14 +26,28 @@ async function bootstrap() {
       : ['http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id'],
   });
 
   const config = new DocumentBuilder()
     .setTitle('Knowledge Base API')
-    .setDescription('API para base de conhecimento com IA')
+    .setDescription(
+      'API para base de conhecimento com IA\n\n' +
+        '**Autenticação:**\n' +
+        '1. Primeiro, crie um usuário em POST /users/sync\n' +
+        '2. Copie o _id retornado\n' +
+        '3. Clique em "Authorize" e cole o _id no campo x-user-id',
+    )
     .setVersion('1.0')
-    .addBearerAuth()
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'x-user-id',
+        in: 'header',
+        description: 'User ID obtido do endpoint /users/sync',
+      },
+      'x-user-id',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
