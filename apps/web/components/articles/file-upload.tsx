@@ -96,9 +96,17 @@ export function FileUpload({ spaceId, onArticleCreated }: FileUploadProps) {
         });
       }, 200);
 
+      const session = await fetch('/api/auth/session').then((res) => res.json());
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+      const headers: Record<string, string> = {};
+      if (session?.user?.id) {
+        headers['x-user-id'] = session.user.id;
+      }
+
       const response = await fetch(`${apiUrl}/articles/upload`, {
         method: 'POST',
+        headers,
         body: formData,
       });
 
