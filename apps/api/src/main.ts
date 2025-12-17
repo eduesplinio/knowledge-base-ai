@@ -1,12 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import type { INestApplication } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
-let app: any;
+let app: INestApplication;
 
-async function createApp() {
+async function createApp(): Promise<INestApplication> {
   if (!app) {
     app = await NestFactory.create(AppModule);
 
@@ -62,16 +63,17 @@ async function createApp() {
 }
 
 // Para desenvolvimento local
-async function bootstrap() {
-  const app = await createApp();
-  await app.listen(process.env.PORT ?? 3001);
+async function bootstrap(): Promise<void> {
+  const nestApp = await createApp();
+  await nestApp.listen(process.env.PORT ?? 3001);
 }
 
 // Para Vercel (serverless)
-export default async function handler(req: any, res: any) {
-  const app = await createApp();
-  const expressApp = app.getHttpAdapter().getInstance();
-  return expressApp(req, res);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function handler(req: any, res: any): Promise<void> {
+  const nestApp = await createApp();
+  const expressApp = nestApp.getHttpAdapter().getInstance();
+  return expressApp(req, res) as Promise<void>;
 }
 
 // Executa bootstrap apenas se não estiver em ambiente serverless
