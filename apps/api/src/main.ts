@@ -54,7 +54,7 @@ export function setupApp(app: INestApplication) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await setupApp(app);
+  setupApp(app);
   await app.listen(process.env.PORT ?? 3001);
 }
 void bootstrap();

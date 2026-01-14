@@ -5,7 +5,7 @@ import type { Request, Response } from 'express';
 
 export default async function handler(req: Request, res: Response) {
   const app = await NestFactory.create(AppModule);
-  await setupApp(app);
+  setupApp(app);
   await app.init();
 
   const instance = app.getHttpAdapter().getInstance() as (
