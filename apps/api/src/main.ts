@@ -4,7 +4,7 @@ import { ValidationPipe, INestApplication } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
-export async function setupApp(app: INestApplication) {
+export function setupApp(app: INestApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
