@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "env": [
         "GITHUB_ID",
         "GITHUB_SECRET",
@@ -29,5 +29,6 @@
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"]
     }
-  }
+  },
+  "globalPassThroughEnv": ["MONGODB_URI", "OPENAI_API_KEY", "CORS_ORIGIN", "JWT_SECRET"]
 }
